@@ -1,0 +1,23 @@
+﻿@using Inventory.Domain.Entities
+@model Catalogue
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Delete Product</h3>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <h5>Are you sure?</h5>
+
+        <p><b>@Model.Name</b> (@Model.Code)</p>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <button class="btn btn-danger">Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+
+    </div>
+</div>

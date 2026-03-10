@@ -1,0 +1,99 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\AmbitInventory\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\views\\catalogue\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\views\\catalogue\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\views\\catalogue\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\views\\catalogue\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\views\\catalogue\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\views\\catalogue\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Index.cshtml",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Views\\Catalogue\\Index.cshtml",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Index.cshtml",
+              "RelativeToolTip": "src\\Inventory.Web\\Views\\Catalogue\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-26T15:05:56.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Delete.cshtml",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Views\\Catalogue\\Delete.cshtml",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Delete.cshtml",
+              "RelativeToolTip": "src\\Inventory.Web\\Views\\Catalogue\\Delete.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-26T13:57:53.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Create.cshtml",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Views\\Catalogue\\Create.cshtml",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Catalogue\\Create.cshtml",
+              "RelativeToolTip": "src\\Inventory.Web\\Views\\Catalogue\\Create.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAwAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-26T13:57:19.491Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

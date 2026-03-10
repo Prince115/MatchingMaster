@@ -1,0 +1,17 @@
+﻿@using Inventory.Infrastructure.Entities
+@model ApplicationUser
+
+<form method="post">
+    <input type="hidden" name="userId" value="@Model.Id" />
+
+    <h3>Assign Role</h3>
+
+    <select name="role" class="form-control mb-2">
+        @foreach (var r in ViewBag.Roles)
+        {
+            <option>@r.Name</option>
+        }
+    </select>
+
+    <button class="btn btn-primary">Assign</button>
+</form>

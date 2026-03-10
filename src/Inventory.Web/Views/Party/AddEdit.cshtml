@@ -1,0 +1,59 @@
+﻿@using Inventory.Domain.Entities
+@model Party
+@{
+	ViewData["Title"] = ViewBag.Action + "Party";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0">@ViewBag.Action Party</h4>
+    </div>
+
+    <div class="card-body">
+        <form asp-action="Save" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.PartyId)
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label fw-semibold">Party Name</label>
+                    <input asp-for="PartyName" class="form-control" placeholder="Enter party name" />
+                    <span asp-validation-for="PartyName" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="form-label fw-semibold">City</label>
+                    <input asp-for="City" class="form-control" placeholder="Enter city" />
+                    <span asp-validation-for="City" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="form-label fw-semibold">State</label>
+                    <input asp-for="State" class="form-control" placeholder="Enter state" />
+                    <span asp-validation-for="State" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="form-label fw-semibold">Remarks</label>
+                    <input asp-for="Remarks" class="form-control" placeholder="Enter remarks" />
+                    <span asp-validation-for="Remarks" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary px-4">
+                    @Html.Raw(ViewBag.Action == "Create" ? "Save" : "Update")
+                </button>
+
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

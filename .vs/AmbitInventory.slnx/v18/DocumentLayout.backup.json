@@ -1,0 +1,72 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\AmbitInventory\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\views\\party\\addedit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\views\\party\\addedit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\views\\party\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\views\\party\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|d:\\ambitinventory\\src\\inventory.web\\controllers\\partycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53381E7F-C3CC-F6AF-323F-E278A7BD2F24}|src\\Inventory.Web\\Inventory.Web.csproj|solutionrelative:src\\inventory.web\\controllers\\partycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PartyController.cs",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Controllers\\PartyController.cs",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Controllers\\PartyController.cs",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Controllers\\PartyController.cs",
+              "RelativeToolTip": "src\\Inventory.Web\\Controllers\\PartyController.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAkwFsAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T15:06:09.361Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AddEdit.cshtml",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Party\\AddEdit.cshtml",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Views\\Party\\AddEdit.cshtml",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Party\\AddEdit.cshtml",
+              "RelativeToolTip": "src\\Inventory.Web\\Views\\Party\\AddEdit.cshtml",
+              "ViewState": "AgIAABgAAAAAAAAAAAAjwCYAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-10T15:09:20.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Party\\Index.cshtml",
+              "RelativeDocumentMoniker": "src\\Inventory.Web\\Views\\Party\\Index.cshtml",
+              "ToolTip": "D:\\AmbitInventory\\src\\Inventory.Web\\Views\\Party\\Index.cshtml",
+              "RelativeToolTip": "src\\Inventory.Web\\Views\\Party\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-10T15:08:11.787Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

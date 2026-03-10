@@ -1,0 +1,66 @@
+﻿@using Inventory.Domain.ViewModels
+@model Inventory.Domain.ViewModels.PaginatedList<MatchingVM>
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between mb-3">
+	<h3>Design</h3>
+
+	<a asp-action="AddEdit" asp-controller="Design" class="btn btn-primary">
+		Add Design
+	</a>
+</div>
+
+<form method="get" class="mb-3 row g-2">
+
+	<div class="row g-2">
+		<div class="col-md-3">
+			<select name="PartyId"
+					class="form-select"
+					asp-items="ViewBag.PartyList">
+				<option value="">--</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="col-auto">
+		<button type="submit" class="btn btn-primary">Filter</button>
+	</div>
+</form>
+
+<table class="table table-bordered table-striped">
+	<thead class="table-dark">
+		<tr>
+			<th>DesignNo</th>
+			<th>Quality</th>
+			<th>PartyName</th>
+			<th>Date</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach (var item in Model.Items)
+		{
+			<tr>
+				<td>@item.DesignNo</td>
+				<td>@item.Quality</td>
+				<td>@item.PartyName</td>
+				<td>@item.Date.ToString("dd-MM-yyyy")</td>
+				<td>
+					<a asp-controller="Design" asp-action="AddEdit" asp-route-DesignId="@item.DesignId"
+					   class="btn btn-sm btn-warning me-1">
+						Edit
+					</a>
+
+					<a asp-controller="Design" asp-action="Delete"
+					   asp-route-id="@item.DesignId"
+					   class="btn btn-danger btn-sm">
+						Delete
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

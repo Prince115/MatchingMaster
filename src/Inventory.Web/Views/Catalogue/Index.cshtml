@@ -1,0 +1,109 @@
+﻿@using Inventory.Domain.Entities
+@using Inventory.Domain.ViewModels
+@model Inventory.Domain.ViewModels.PaginatedList<CatalogueStockVM>
+
+@{
+    ViewData["Title"] = "Catalogue";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between mb-3">
+    <h3>Catalogue</h3>
+
+    <a asp-action="AddEdit" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Product
+    </a>
+</div>
+
+<form method="get" class="mb-3 row g-2">
+    <div class="col-auto">
+        <input name="search"
+               class="form-control"
+               placeholder="Search code or name..."
+               value="@ViewBag.Search" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Packing</th>
+                    <th>Stock</th>
+                    <th>Remark</th>
+                    <th width="180">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Code</td>
+                        <td>@item.Name</td>
+                        <td>@item.Packing</td>
+                        <td>
+                            <span class="badge @(item.Stock < 10 ? "bg-danger" : "bg-success")">
+                                @item.Stock
+                            </span>
+                        </td>
+                        <td>@item.Remark</td>
+
+                        <td>
+                            <a asp-action="AddEdit"
+                               asp-route-id="@item.Id"
+                               class="btn btn-warning btn-sm">
+                                Edit
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@item.Id"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete this item?');">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Items.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            No catalogue items found
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="card-footer bg-white">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageIndex - 1)" asp-route-search="@ViewBag.Search" asp-route-pageSize="@ViewBag.PageSize">Previous</a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search" asp-route-pageSize="@ViewBag.PageSize">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageIndex + 1)" asp-route-search="@ViewBag.Search" asp-route-pageSize="@ViewBag.PageSize">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

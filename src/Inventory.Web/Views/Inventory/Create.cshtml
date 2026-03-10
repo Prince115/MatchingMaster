@@ -1,0 +1,33 @@
+﻿@using Inventory.Domain.Entities
+@model InventoryTransaction
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>Add Inventory Transaction</h3>
+<form asp-action="Create">
+
+	<div class="card shadow-sm">
+		<div class="card-body">
+
+			<label>Product</label>
+			<select asp-for="CatalogueId"
+					asp-items="@(new SelectList(ViewBag.Catalogues, "Id", "Name"))"
+					class="form-control mb-2">
+			</select>
+
+			<label>Transaction Type</label>
+			<select asp-for="TransactionType" class="form-control mb-2">
+				<option value="1">Stock</option>
+				<option value="2">Order</option>
+			</select>
+
+			<label>Quantity</label>
+			<input asp-for="Quantity" class="form-control mb-2" />
+
+			<button class="btn btn-success">Save</button>
+			<a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+		</div>
+	</div>
+
+</form>

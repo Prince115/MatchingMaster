@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="col-md-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <h6>Total Products</h6>
+            <h3>@ViewBag.TotalCatalogues</h3>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <h6>Stock In</h6>
+            <h3>@ViewBag.StockIn</h3>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <h6>Stock Out</h6>
+            <h3>@ViewBag.StockOut</h3>
+        </div>
+    </div>
+</div>
