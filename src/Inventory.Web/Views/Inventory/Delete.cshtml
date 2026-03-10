@@ -1,0 +1,26 @@
+﻿@using Inventory.Domain.Entities
+@model InventoryTransaction
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Delete Transaction</h3>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p>Delete this transaction?</p>
+
+        <b>@Model.Catalogue.Name</b> —
+        @Model.TransactionType —
+        Qty: @Model.Quantity
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+
+            <button class="btn btn-danger">Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+
+    </div>
+</div>
