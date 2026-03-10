@@ -1,9 +1,0 @@
-### After Opening Notepad — Paste This Inside:
-```
-.vs/
-bin/
-obj/
-*.user
-*.suo
-*.vsidx
-*.txt 
