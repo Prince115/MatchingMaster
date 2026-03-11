@@ -43,7 +43,9 @@ public class CatalogueController : Controller
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(x => x.Code.Contains(search, StringComparison.CurrentCultureIgnoreCase) || x.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase));
+            query = query.Where(x =>
+                EF.Functions.Like(x.Code, $"%{search}%") ||
+                EF.Functions.Like(x.Name, $"%{search}%"));
         }
 
         var total = await query.CountAsync();

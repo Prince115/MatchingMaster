@@ -89,7 +89,19 @@ namespace Inventory.Web.Controllers
         }
         #endregion
 
+
         #region Delete
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _db.Party.FindAsync(id);
+            if (item == null) return NotFound();
+
+            _db.Party.Remove(item);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Party deleted successfully.";
+            return RedirectToAction("Index");
+        }
         #endregion
     }
 }

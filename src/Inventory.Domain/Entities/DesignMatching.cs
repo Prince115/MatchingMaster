@@ -10,7 +10,6 @@ namespace Inventory.Domain.Entities
         public int DesignPlateId { get; set; }
         public int MatchingNo { get; set; }
         public string? Colour { get; set; }
-        public decimal? Quantity { get; set; }
 
         public DesignPlate DesignPlate { get; set; } = null!;
     }

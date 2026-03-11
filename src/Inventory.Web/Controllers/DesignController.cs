@@ -25,7 +25,6 @@ namespace Inventory.Web.Controllers
             {
                 DesignId = x.DesignId,
                 DesignNo = x.DesignNo,
-                Quality = x.Quality,
                 Date = x.Date,
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
@@ -84,7 +83,6 @@ namespace Inventory.Web.Controllers
                 {
                     DesignId = vDesign.DesignId,
                     DesignNo = vDesign.DesignNo,
-                    Quality = vDesign.Quality,
                     Date = vDesign.Date,
                     PartyId = vDesign.PartyId,
                     Plates = vDesign.DesignPlates.Count(),
@@ -103,7 +101,6 @@ namespace Inventory.Web.Controllers
                                 DesignMatchingId = m.DesignMatchingId,
                                 MatchingNo = m.MatchingNo,
                                 Colour = m.Colour,
-                                Quantity = m.Quantity
                             }).ToList()
                     }).ToList()
                 };
@@ -140,7 +137,6 @@ namespace Inventory.Web.Controllers
                 var vDesign = new Design
                 {
                     DesignNo = vModel.DesignNo,
-                    Quality = vModel.Quality,
                     Date = vModel.Date,
                     PartyId = vModel.PartyId
                 };
@@ -160,7 +156,6 @@ namespace Inventory.Web.Controllers
                         {
                             MatchingNo = matchNo++,
                             Colour = cell.Colour,
-                            Quantity = cell.Quantity
                         });
                     }
 
@@ -180,7 +175,6 @@ namespace Inventory.Web.Controllers
                     return NotFound();
 
                 vDesign.DesignNo = vModel.DesignNo;
-                vDesign.Quality = vModel.Quality;
                 vDesign.Date = vModel.Date;
                 vDesign.PartyId = vModel.PartyId;
 
@@ -202,12 +196,36 @@ namespace Inventory.Web.Controllers
                         if (matching == null) continue; // safety check
 
                         matching.Colour = cell.Colour;
-                        matching.Quantity = cell.Quantity;
                     }
                 }
             }
 
             await _db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        #endregion
+
+
+        #region Delete
+        public async Task<IActionResult> Delete(int id)
+        {
+            var vDesign = await _db.Designs
+                .Include(x => x.DesignPlates)
+                    .ThenInclude(x => x.DesignMatchings)
+                .FirstOrDefaultAsync(x => x.DesignId == id);
+
+            if (vDesign == null)
+                return NotFound();
+
+            // Remove matchings first, then plates, then design
+            foreach (var plate in vDesign.DesignPlates)
+                _db.DesignMatchings.RemoveRange(plate.DesignMatchings);
+
+            _db.DesignPlates.RemoveRange(vDesign.DesignPlates);
+            _db.Designs.Remove(vDesign);
+
+            await _db.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
         #endregion

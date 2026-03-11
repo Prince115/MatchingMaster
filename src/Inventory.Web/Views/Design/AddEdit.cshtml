@@ -24,11 +24,6 @@
 			<!-- ── Top Fields ── -->
 			<div class="row mb-3">
 				<div class="col-md-3">
-					<label class="form-label fw-semibold">Quality</label>
-					<input asp-for="Quality" class="form-control" name="Quality" placeholder="Enter Quality" />
-					<span asp-validation-for="Quality" class="text-danger"></span>
-				</div>
-				<div class="col-md-3">
 					<label class="form-label fw-semibold">Design No</label>
 					<input asp-for="DesignNo" class="form-control" name="DesignNo" placeholder="Enter Design No." />
 					<span asp-validation-for="DesignNo" class="text-danger"></span>
@@ -137,8 +132,7 @@
 			// null on Add mode, full rows array on Edit mode
 			const serverRows = @Html.Raw(Model?.Rows != null && Model.Rows.Count > 0
 				? System.Text.Json.JsonSerializer.Serialize(Model.Rows)
-				: "null"
-									);
+				: "null");
 
 			const isEdit = @Html.Raw(isEdit ? "true" : "false");
 
@@ -173,11 +167,10 @@
 				for (let m = 0; m < mCount; m++) {
 					const th = document.createElement('th');
 					th.textContent = 'M' + (m + 1);
-					th.colSpan = 2;
 					th.classList.add('bg-light', 'fw-bold');
 					headMain.appendChild(th);
 
-					['Color', 'Qty'].forEach(label => {
+					['Color'].forEach(label => {
 						const sub = document.createElement('th');
 						sub.textContent = label;
 						sub.classList.add('bg-light', 'fw-bold');
@@ -233,14 +226,6 @@
 									   name="Rows[${r}].Matchings[${m}].Colour"
 									   value="${escHtml(cell?.Colour)}"
 									   placeholder="Colour" />
-							</td>
-							<td>
-								<input type="number"
-									   class="form-control form-control-sm"
-									   style="min-width:70px"
-									   name="Rows[${r}].Matchings[${m}].Quantity"
-									   value="${cell?.Quantity ?? ''}"
-									   min="0" />
 							</td>`;
 					}
 

@@ -9,7 +9,6 @@ namespace Inventory.Domain.ViewModels
     {
         public int DesignId { get; set; }
         public string? DesignNo { get; set; }
-        public int? Quality { get; set; }
         public DateOnly Date { get; set; }
         public int PartyId { get; set; }
         public int Plates { get; set; }
@@ -43,6 +42,5 @@ namespace Inventory.Domain.ViewModels
         [ValidateNever]
         public int MatchingNo { get; set; }
         public string? Colour { get; set; }
-        public decimal? Quantity { get; set; }
     }
 }

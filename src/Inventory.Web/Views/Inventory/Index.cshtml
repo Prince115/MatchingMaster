@@ -1,79 +1,183 @@
 ﻿@using Inventory.Domain.Entities
 @model Inventory.Domain.ViewModels.PaginatedList<InventoryTransaction>
+
 @{
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="d-flex justify-content-between mb-3">
-	<h3>Inventory Transactions</h3>
+<div class="card shadow-sm">
 
-	<a asp-action="Create" class="btn btn-primary">
-		Add Transaction
-	</a>
+    <!-- Header -->
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Inventory Transactions</h4>
+
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Transaction
+        </a>
+    </div>
+
+    <div class="card-body">
+
+        <!-- Filter -->
+        <form method="get" class="row g-3 align-items-end mb-3">
+
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Search</label>
+                <input name="search"
+                       class="form-control"
+                       placeholder="Search product code or name..."
+                       value="@ViewBag.Search" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Transaction Type</label>
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="Stock" selected="@(ViewBag.Type?.ToString() == "Stock" ? "selected" : null)">Stock</option>
+                    <option value="Order" selected="@(ViewBag.Type?.ToString() == "Order" ? "selected" : null)">Order</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Product</label>
+                <select name="catalogueId" class="form-select">
+                    <option value="">All Products</option>
+                    @if (ViewBag.Catalogues is IEnumerable<Catalogue> cats)
+                    {
+                        foreach (var c in cats)
+                        {
+                            <option value="@c.Id"
+                                    selected="@(ViewBag.CatalogueId != null && ViewBag.CatalogueId == c.Id ? "selected" : null)">
+                                @c.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <button class="btn btn-primary">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </div>
+
+            <div class="col-auto">
+                <a asp-action="Index" class="btn btn-secondary">
+                    Reset
+                </a>
+            </div>
+
+        </form>
+
+        <!-- Table -->
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>Date</th>
+                        <th class="text-center" width="120">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Items.Any())
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.Catalogue.Name</td>
+
+                                <td>
+                                    <span class="badge @(item.TransactionType.ToString() == "Stock" ? "bg-success" : "bg-warning text-dark")">
+                                        @item.TransactionType
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="fw-semibold">@item.Quantity</span>
+                                </td>
+
+                                <td>@item.TransactionDate.ToString("dd-MM-yyyy")</td>
+
+                                <td class="text-center">
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Are you sure you want to delete this record?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No transactions found
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="card-footer bg-white">
+
+        <nav>
+            <ul class="pagination mb-0">
+
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-type="@ViewBag.Type"
+                       asp-route-catalogueId="@ViewBag.CatalogueId">
+                        Previous
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-search="@ViewBag.Search"
+                           asp-route-type="@ViewBag.Type"
+                           asp-route-catalogueId="@ViewBag.CatalogueId">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-type="@ViewBag.Type"
+                       asp-route-catalogueId="@ViewBag.CatalogueId">
+                        Next
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+    </div>
+
 </div>
-
-<form method="get" class="mb-3 row g-2">
-	<div class="col-md-4">
-		<input name="search" class="form-control" placeholder="Search product code or name..." value="@ViewBag.Search" />
-	</div>
-
-	<div class="col-md-3">
-		<div class="row g-2">
-			<div class="col">
-				<select name="type" class="form-select">
-					<option value="">All types</option>
-					<option value="Stock" selected="@(ViewBag.Type?.ToString() == "Stock" ? "selected" : null)">Stock</option>
-					<option value="Order" selected="@(ViewBag.Type?.ToString() == "Order" ? "selected" : null)">Order</option>
-				</select>
-			</div>
-
-			<div class="col">
-				<select name="catalogueId" class="form-select">
-					<option value="">All products</option>
-					@if (ViewBag.Catalogues is IEnumerable<Catalogue> cats)
-					{
-						foreach (var c in cats)
-						{
-							<option value="@c.Id" selected="@(ViewBag.CatalogueId != null && ViewBag.CatalogueId == c.Id ? "selected" : null)">@c.Name</option>
-						}
-					}
-				</select>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-auto">
-		<button class="btn btn-primary">Filter</button>
-	</div>
-</form>
-
-<table class="table table-bordered table-striped">
-	<thead class="table-dark">
-		<tr>
-			<th>Product</th>
-			<th>Type</th>
-			<th>Qty</th>
-			<th>Date</th>
-			<th>Action</th>
-		</tr>
-	</thead>
-
-	<tbody>
-		@foreach (var item in Model.Items)
-		{
-			<tr>
-				<td>@item.Catalogue.Name</td>
-				<td>@item.TransactionType</td>
-				<td>@item.Quantity</td>
-				<td>@item.TransactionDate.ToString("dd-MM-yyyy")</td>
-				<td>
-					<a asp-action="Delete"
-					   asp-route-id="@item.Id"
-					   class="btn btn-danger btn-sm">
-						Delete
-					</a>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
