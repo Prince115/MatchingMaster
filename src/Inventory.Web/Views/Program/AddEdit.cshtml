@@ -1,0 +1,181 @@
+﻿@using Inventory.Domain.ViewModels
+@model ProgramVM
+@{
+	ViewData["Title"] = ViewBag.Action + "Program";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow-sm">
+	<div class="card-header">
+		<h4 class="mb-0">@ViewBag.Action Program</h4>
+	</div>
+
+	<div class="card-body">
+		<form asp-action="Save" method="post" autocomplete="off">
+
+			@Html.AntiForgeryToken()
+			@Html.HiddenFor(x => x.ProgramId)
+			@Html.HiddenFor(x => x.ProgramNo)
+
+			<input type="hidden" id="SelectedMatchingIds" name="SelectedMatchingIds" />
+
+			<div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+			<div class="row mb-3">
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Program No</label>
+					<input asp-for="ProgramNo" type="text" class="form-control" placeholder="Enter Program No." readonly="readonly" />
+					<span asp-validation-for="ProgramNo" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Party</label>
+					<select asp-for="PartyId" asp-items="ViewBag.PartyList" class="form-select">
+						<option value="">-- Select Party --</option>
+					</select>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Quality</label>
+					<input asp-for="Quality" type="text" class="form-control" placeholder="Enter Quality" />
+					<span asp-validation-for="Quality" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Main Cut</label>
+					<input asp-for="MainCut" type="number" class="form-control" placeholder="Enter MainCut" />
+					<span asp-validation-for="MainCut" class="text-danger"></span>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Finishing</label>
+					<input asp-for="Fold" type="text" class="form-control" placeholder="Enter Fold" />
+					<span asp-validation-for="Fold" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Round</label>
+					<input asp-for="Round" type="number" class="form-control" placeholder="Enter Round" />
+					<span asp-validation-for="Round" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Rate</label>
+					<input asp-for="Rate" class="form-control" placeholder="Enter Rate" />
+					<span asp-validation-for="Rate" class="text-danger"></span>
+				</div>
+			</div>
+
+			<div class="row mb-3">
+				<div class="col-md-3">
+					<label class="form-label fw-semibold">Design</label>
+					<select asp-for="DesignId" asp-items="ViewBag.DesignList"
+							class="form-select" id="DesignId">
+						<option value="">-- Select Design --</option>
+					</select>
+				</div>
+
+				<div class="col-md-3" style="margin-top: 31px !important;">
+					<div class="dropdown w-100">
+
+						<button class="btn btn-outline-secondary w-100 text-start dropdown-toggle"
+								type="button"
+								data-bs-toggle="dropdown"
+								id="matchingDropdownBtn">
+							Select Matching
+						</button>
+
+						<div class="dropdown-menu  p-2"
+							 id="MatchingList"
+							 style="width: 300px !important; max-height:220px; overflow:auto;">
+						</div>
+
+					</div>
+				</div>
+				
+
+				<div class="col-md-6">
+					<label class="form-label fw-semibold">Remarks</label>
+					<textarea asp-for="Remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+					<span asp-validation-for="Remarks" class="text-danger"></span>
+				</div>
+			</div>
+
+			<hr />
+
+			<div class="d-flex gap-2 mt-3">
+				<button type="submit" class="btn btn-primary px-4">
+					@Html.Raw(ViewBag.Action == "Add" ? "Save" : "Update")
+				</button>
+
+				<a asp-action="Index" class="btn btn-outline-secondary px-4">
+					Cancel
+				</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+	$(document).on("click", "#MatchingList", function (e) {
+		e.stopPropagation();
+	});
+
+// 	$("#DesignId").change(function () {
+
+//     var designId = $(this).val();
+
+//     $("#MatchingId").empty();
+//     $("#MatchingId").append('<option value="">-- Select Matching --</option>');
+
+//     $.get("/Program/GetMatchingByDesign", { designId: designId }, function (data) {
+
+//         $.each(data, function (i, item) {
+// 			$("#MatchingId").append(
+// 				'<option value="' + item.designMatchingId + '">' +
+// 				'Matching ' + item.matchingNo + ' - ' + item.plateName +
+// 				'</option>'
+// 			);
+//         });
+//     });
+// });
+
+$("#DesignId").on("change", function () {
+
+    const designId = $(this).val();
+    const matchingList = $("#MatchingList");
+
+    matchingList.empty();
+
+    if (!designId) {
+        matchingList.append(`<div class="text-muted">Select design first</div>`);
+        return;
+    }
+
+    $.get("/Program/GetMatchingByDesign", { designId: designId }, function (data) {
+
+        matchingList.empty();
+
+        $.each(data, function (i, item) {
+
+            matchingList.append(`
+                <div class="form-check">
+                    <input class="form-check-input matching-checkbox"
+                           type="checkbox"
+                           name="SelectedMatchingIds"
+                           value="${item.designMatchingId}"
+                           id="matching_${item.designMatchingId}">
+
+                    <label class="form-check-label" for="matching_${item.designMatchingId}">
+                        Matching ${item.matchingNo} - ${item.plateName}
+                    </label>
+                </div>
+            `);
+        });
+    });
+});
+</script>

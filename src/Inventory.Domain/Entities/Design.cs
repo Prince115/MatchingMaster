@@ -9,7 +9,7 @@ namespace Inventory.Domain.Entities
     {
         public int DesignId { get; set; }
         public string? DesignNo { get; set; }
-        public int PartyId { get; set; }
+        public int? PartyId { get; set; }
         public DateOnly Date { get; set; }
 
         public Party Party { get; set; } = null!;

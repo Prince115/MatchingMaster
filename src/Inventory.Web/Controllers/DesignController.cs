@@ -19,7 +19,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Index
-        public async Task<IActionResult> Index(int? PartyId, int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
             var query = _db.Designs.Select(x => new MatchingVM
             {
@@ -28,12 +28,11 @@ namespace Inventory.Web.Controllers
                 Date = x.Date,
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
+                PlateCount = x.DesignPlates.Where(p => p.DesignId == x.DesignId).Count(),
+                MatchingCount = x.DesignPlates.Where(p => p.DesignId == x.DesignId)
+                    .SelectMany(p => p.DesignMatchings)
+                    .Count()
             });
-
-            if (PartyId != null)
-            {
-                query = query.Where(x => x.PartyId == PartyId);
-            }
 
             var total = await query.CountAsync();
 
@@ -46,9 +45,6 @@ namespace Inventory.Web.Controllers
             var model = new PaginatedList<MatchingVM>(items, total, page, pageSize);
 
             ViewBag.PageSize = pageSize;
-            ViewBag.PartyList = new SelectList(
-                   _db.Party, "PartyId", "PartyName", PartyId
-                );
 
             return View(model);
         }
@@ -131,7 +127,7 @@ namespace Inventory.Web.Controllers
                 return View("AddEdit", vModel);
             }
 
-            
+
             if (vModel.DesignId == 0)
             {
                 var vDesign = new Design
@@ -187,7 +183,7 @@ namespace Inventory.Web.Controllers
 
                     plate.PlateName = row.PlateName;
                     plate.PlateNo = row.PlateNo;
-                   
+
                     foreach (var cell in row.Matchings)
                     {
                         var matching = plate.DesignMatchings

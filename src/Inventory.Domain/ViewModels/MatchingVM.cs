@@ -10,9 +10,15 @@ namespace Inventory.Domain.ViewModels
         public int DesignId { get; set; }
         public string? DesignNo { get; set; }
         public DateOnly Date { get; set; }
-        public int PartyId { get; set; }
+        public int? PartyId { get; set; }
         public int Plates { get; set; }
         public int Matching { get; set; }
+
+        [ValidateNever]
+        public int PlateCount { get; set; }
+
+        [ValidateNever]
+        public int MatchingCount { get; set; }
 
         [ValidateNever]   
         public string PartyName { get; set; }

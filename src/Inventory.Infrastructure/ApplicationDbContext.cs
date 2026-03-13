@@ -15,6 +15,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<DesignPlate> DesignPlates => Set<DesignPlate>();
     public DbSet<DesignMatching> DesignMatchings => Set<DesignMatching>();
     public DbSet<Party> Party => Set<Party>();
+    public DbSet<ProgramEntry> Program => Set<ProgramEntry>();
+    public DbSet<ProgramMatching> ProgramMatchings => Set<ProgramMatching>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
