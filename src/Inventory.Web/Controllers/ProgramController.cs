@@ -28,6 +28,8 @@ namespace Inventory.Web.Controllers
                 ProgramNo = x.ProgramNo,
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
+                DesignNo = _db.Designs.Where(d => d.DesignId == x.DesignId).Select(d => d.DesignNo).FirstOrDefault(),
+                TotalMatchings = _db.ProgramMatchings.Where(m => m.ProgramId == x.ProgramId).Count(),
                 Quality = x.Quality,
                 Date = x.Date,
                 MainCut = x.MainCut,
@@ -38,7 +40,6 @@ namespace Inventory.Web.Controllers
                 Round = x.Round,
                 Rate = x.Rate,
                 DesignId = x.DesignId,
-                DesignNo = _db.Designs.Where(d => d.DesignId == x.DesignId).Select(d => d.DesignNo).FirstOrDefault()
             });
 
             if (PartyId != null)
@@ -84,6 +85,7 @@ namespace Inventory.Web.Controllers
 
             var vModel = new ProgramVM
             {
+                Date = DateOnly.FromDateTime(DateTime.Today),
                 ProgramNo = $"A{vNextProgramNo}"
             };
 
@@ -108,17 +110,9 @@ namespace Inventory.Web.Controllers
                     Round = program.Round,
                     Rate = program.Rate,
                     DesignId = program.DesignId,
-
-                    Matchings = program.ProgramMatchings.Select(m => new ProgramMatchingVM
-                    {
-                        ProgramMatchingId = m.ProgramMatchingId,
-                        ProgramId = m.ProgramId,
-                        DesignId = m.DesignId,
-                        DesignMatchingId = m.DesignMatchingId,
-                        PlateId = m.PlateId,
-                        MatchingNo = m.MatchingNo,
-                        Colour = m.Colour,
-                    }).ToList()
+                    SelectedMatchingIds = program.ProgramMatchings
+                                .Select(x => x.DesignMatchingId)
+                                .ToList()
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
@@ -140,22 +134,29 @@ namespace Inventory.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(ProgramVM model)
         {
+            // Validate matchings
+            if (model.SelectedMatchingIds == null || !model.SelectedMatchingIds.Any())
+                ModelState.AddModelError(nameof(model.SelectedMatchingIds), "Please select at least one matching.");
 
             if (!ModelState.IsValid)
             {
-                ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName");
-                ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo");
+                ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", model.PartyId);
+                ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", model.DesignId);
                 return View("AddEdit", model);
             }
 
-            if(model.ProgramId == 0)
+            var vDesignMatchingList = await _db.DesignMatchings
+                .Where(m => model.SelectedMatchingIds!.Contains(m.DesignMatchingId))
+                .ToListAsync();
+
+            if (model.ProgramId == 0)
             {
                 var program = new ProgramEntry
                 {
                     ProgramNo = model.ProgramNo,
                     PartyId = model.PartyId,
                     Quality = model.Quality,
-                    Date = DateOnly.FromDateTime(DateTime.Today),
+                    Date = model.Date,
                     MainCut = model.MainCut,
                     Fold = model.Fold,
                     Finishing = model.Finishing,
@@ -163,63 +164,99 @@ namespace Inventory.Web.Controllers
                     Remarks = model.Remarks,
                     Round = model.Round,
                     Rate = model.Rate,
-                    DesignId = model.DesignId,
-                    ProgramMatchings = model.SelectedMatchingIds.Select(vMatchingId => new ProgramMatching
-                    {
-                        ProgramId = model.ProgramId,
-                        DesignMatchingId = vMatchingId,
-                        DesignId = model.DesignId,
-                        PlateId = _db.DesignMatchings.Where(dm => dm.DesignMatchingId == vMatchingId).Select(dm => dm.DesignPlateId).FirstOrDefault(),
-                        MatchingNo = _db.DesignMatchings.Where(dm => dm.DesignMatchingId == vMatchingId).Select(dm => dm.MatchingNo).FirstOrDefault(),
-                        Colour = _db.DesignMatchings.Where(dm => dm.DesignMatchingId == vMatchingId).Select(dm => dm.Colour).FirstOrDefault(),
-                    }).ToList()
-
+                    DesignId = model.DesignId
                 };
 
                 await _db.Program.AddAsync(program);
+                await _db.SaveChangesAsync();
+
+                foreach (var vMatching in vDesignMatchingList)
+                {
+                    program.ProgramMatchings.Add(new ProgramMatching
+                    {
+                        ProgramId = program.ProgramId,
+                        DesignId = model.DesignId,
+                        DesignMatchingId = vMatching.DesignMatchingId,
+                        PlateId = vMatching.DesignPlateId,
+                        MatchingNo = vMatching.MatchingNo,
+                        Colour = vMatching.Colour
+                    });
+                }
             }
             else
             {
-                var program = await _db.Program.Include(x => x.ProgramMatchings).FirstOrDefaultAsync(x => x.ProgramId == model.ProgramId);
-                
-                if (program == null)
-                {
+                var vProgram = await _db.Program
+                    .Include(x => x.ProgramMatchings)
+                    .FirstOrDefaultAsync(x => x.ProgramId == model.ProgramId);
+
+                if (vProgram == null)
                     return NotFound();
+
+                vProgram.ProgramNo = model.ProgramNo;
+                vProgram.PartyId = model.PartyId;
+                vProgram.Quality = model.Quality;
+                vProgram.Date = model.Date;
+                vProgram.MainCut = model.MainCut;
+                vProgram.Fold = model.Fold;
+                vProgram.Finishing = model.Finishing;
+                vProgram.Quantity = model.Quantity;
+                vProgram.Remarks = model.Remarks;
+                vProgram.Round = model.Round;
+                vProgram.Rate = model.Rate;
+                vProgram.DesignId = model.DesignId;
+
+                _db.ProgramMatchings.RemoveRange(vProgram.ProgramMatchings);
+
+                foreach (var vMatching in vDesignMatchingList)
+                {
+                    vProgram.ProgramMatchings.Add(new ProgramMatching
+                    {
+                        ProgramId = vProgram.ProgramId,
+                        DesignId = model.DesignId,
+                        DesignMatchingId = vMatching.DesignMatchingId,
+                        PlateId = vMatching.DesignPlateId,
+                        MatchingNo = vMatching.MatchingNo,
+                        Colour = vMatching.Colour
+                    });
                 }
-                program.ProgramNo = model.ProgramNo;
-                program.PartyId = model.PartyId;
-                program.Quality = model.Quality;
-                program.Date = model.Date;
-                program.MainCut = model.MainCut;
-                program.Fold = model.Fold;
-                program.Finishing = model.Finishing;
-                program.Quantity = model.Quantity;
-                program.Remarks = model.Remarks;
-                program.Round = model.Round;
-                program.Rate = model.Rate;
-                program.DesignId = model.DesignId;
             }
 
+            await _db.SaveChangesAsync();
 
             return RedirectToAction("Index");
-
         }
         #endregion
 
+
+        #region Delete
+        public async Task<IActionResult> Delete(int id)
+        {
+            var program = await _db.Program.FindAsync(id);
+
+            if (program == null)
+                return NotFound();
+
+            foreach (var matching in program.ProgramMatchings)
+            {
+                _db.ProgramMatchings.Remove(matching);
+            }
+
+            _db.Program.Remove(program);
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+        #endregion
 
 
         #region GetMatchingByDesign
         [HttpGet]
         public async Task<IActionResult> GetMatchingByDesign(int designId)
         {
-            var data = await _db.DesignPlates
-                .Where(p => p.DesignId == designId)
-                .SelectMany(p => p.DesignMatchings.Select(m => new
-                {
-                    m.DesignMatchingId,
-                    m.MatchingNo,
-                    PlateName = p.PlateName
-                })).ToListAsync();
+            var data = _db.DesignPlates.Where(x => x.DesignId == designId)
+                    .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
+
 
             return Json(data);
         }

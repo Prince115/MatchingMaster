@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -12,35 +13,36 @@ namespace Inventory.Domain.ViewModels
         [Required(ErrorMessage = "Program No is required")]
         public string ProgramNo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Party is required")]
+        [Required(ErrorMessage = "Please select party.")]
         public int PartyId { get; set; }
 
-        // For display purposes only, not required for input
-        public string PartyName { get; set; }
-        public string? Quality { get; set; }
-
-        [Required(ErrorMessage = "Date is required")]
-        public DateOnly Date { get; set; }
-        public int? MainCut { get; set; }
-        public string? Fold { get; set; }
-        public string? Finishing { get; set; }
-        public int? Quantity { get; set; }
-        public string? Remarks { get; set; }
-        public int? Round { get; set; }
-        public string? Rate { get; set; }
-
-        [Required(ErrorMessage = "Design is required")]
+        [Required(ErrorMessage = "Please select design.")]
         public int DesignId { get; set; }
 
-        // For display purposes only, not required for input
-        public string DesignNo { get; set; }
+        public string? Quality { get; set; }
+        public string? Fold { get; set; }
+        public string? Finishing { get; set; }
+        public string? Remarks { get; set; }
+        public string? Rate { get; set; }
+        public DateOnly Date { get; set; }
+        public int? MainCut { get; set; }
+        public int? Quantity { get; set; }
+        public int? Round { get; set; }
 
-        [MinLength(1, ErrorMessage = "At least one Program Matching is required")]
-        public List<ProgramMatchingVM> Matchings { get; set; } = new List<ProgramMatchingVM>();
+        [ValidateNever]
+        public List<int> SelectedMatchingIds { get; set; } = new();
 
+        [ValidateNever]
+        public List<ProgramMatchingVM> Matchings { get; set; } = new();
 
-        [Required(ErrorMessage = "Please select at least one matching.")]
-        public List<int> SelectedMatchingIds { get; set; }
+        [ValidateNever]
+        public string? PartyName { get; set; }  // ✅ nullable — display only
+
+        [ValidateNever]
+        public string? DesignNo { get; set; }
+
+        [ValidateNever]
+        public int TotalMatchings { get; set; }
     }
 
     public class ProgramMatchingVM

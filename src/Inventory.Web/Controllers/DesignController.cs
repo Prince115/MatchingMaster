@@ -29,9 +29,8 @@ namespace Inventory.Web.Controllers
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
                 PlateCount = x.DesignPlates.Where(p => p.DesignId == x.DesignId).Count(),
-                MatchingCount = x.DesignPlates.Where(p => p.DesignId == x.DesignId)
-                    .SelectMany(p => p.DesignMatchings)
-                    .Count()
+                MatchingCount = _db.DesignPlates.Where(p => p.DesignId == x.DesignId)
+                        .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Count(),
             });
 
             var total = await query.CountAsync();
