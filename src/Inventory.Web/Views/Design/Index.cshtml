@@ -25,7 +25,6 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Design No</th>
-                        <th>Party Name</th>
                         <th>Total Plates</th>
                         <th>Total Matching</th>
                         <th>Date</th>
@@ -41,7 +40,6 @@
                         {
                             <tr>
                                 <td>@item.DesignNo</td>
-                                <td>@item.PartyName</td>
                                 <td>@item.PlateCount</td>
                                 <td>@item.MatchingCount</td>
                                 <td>@item.Date.ToString("dd-MM-yyyy")</td>
@@ -70,7 +68,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
+                            <td colspan="5" class="text-center text-muted py-4">
                                 No designs found
                             </td>
                         </tr>
@@ -86,7 +84,6 @@
 
     <!-- Pagination -->
     <div class="card-footer bg-white">
-
         <nav>
             <ul class="pagination mb-0">
 
@@ -122,7 +119,5 @@
 
             </ul>
         </nav>
-
     </div>
-
 </div>
