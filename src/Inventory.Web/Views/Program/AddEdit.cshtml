@@ -10,7 +10,7 @@
    
 	<div class="card-header d-flex justify-content-between align-items-center">
 		<h4 class="mb-0">@(isEdit ? "Edit" : "Add") Program <span class="text-danger">(@Model.ProgramNo)</span></h4>
-
+		
 		<a href="@Url.Action("Index", "Program")" class="btn btn-sm btn-outline-secondary">
 			<i class="bi bi-arrow-left me-1"></i> Back
 		</a>
@@ -63,7 +63,7 @@
 							 style="width:300px !important; max-height:220px; overflow-y:auto;">
 						</div>
 					</div>
-					<span asp-validation-for="SelectedMatchingIds" class="text-danger"></span>
+					<span asp-validation-for="SelectedMatchingNo" class="text-danger"></span>
 				</div>
 
 				<div class="col-md-3">
@@ -141,7 +141,7 @@
 	}
 
 	<script>
-		var selectedMatchings = @Html.Raw(Json.Serialize(Model.SelectedMatchingIds ?? new List<int>()));
+		var selectedMatchings = @Html.Raw(Json.Serialize(Model.SelectedMatchingNo ?? new List<int>()));
 
 		$(document).on("click", "#MatchingList", function (e) {
 			e.stopPropagation();
@@ -171,17 +171,17 @@
 
 				$.each(data, function (i, item) {
 
-					const checked = selectedMatchings.includes(item.designMatchingId) ? "checked" : "";
+					const checked = selectedMatchings.includes(item.matchingNo) ? "checked" : "";
 
 					matchingList.append(`
 						<div class="form-check">
 							<input class="form-check-input matching-checkbox"
 								   type="checkbox"
-								   name="SelectedMatchingIds"
-								   value="${item.designMatchingId}"
-								   id="matching_${item.designMatchingId}"
+								   name="SelectedMatchingNo"
+								   value="${item.matchingNo}"
+								   id="matching_${item.matchingNo}"
 								   ${checked} />
-							<label class="form-check-label" for="matching_${item.designMatchingId}">
+							<label class="form-check-label" for="matching_${item.matchingNo}">
 								Matching - ${item.matchingNo}
 							</label>
 						</div>`);

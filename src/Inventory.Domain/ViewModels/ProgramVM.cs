@@ -30,7 +30,7 @@ namespace Inventory.Domain.ViewModels
         public int? Round { get; set; }
 
         [ValidateNever]
-        public List<int> SelectedMatchingIds { get; set; } = new();
+        public List<int> SelectedMatchingNo { get; set; } = new();
 
         [ValidateNever]
         public List<ProgramMatchingVM> Matchings { get; set; } = new();

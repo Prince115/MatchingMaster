@@ -29,7 +29,7 @@ namespace Inventory.Web.Controllers
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
                 DesignNo = _db.Designs.Where(d => d.DesignId == x.DesignId).Select(d => d.DesignNo).FirstOrDefault(),
-                TotalMatchings = _db.ProgramMatchings.Where(m => m.ProgramId == x.ProgramId).Count(),
+                TotalMatchings = _db.ProgramMatchings.Where(m => m.ProgramId == x.ProgramId).GroupBy(x => x.MatchingNo).Count(),
                 Quality = x.Quality,
                 Date = x.Date,
                 MainCut = x.MainCut,
@@ -110,9 +110,7 @@ namespace Inventory.Web.Controllers
                     Round = program.Round,
                     Rate = program.Rate,
                     DesignId = program.DesignId,
-                    SelectedMatchingIds = program.ProgramMatchings
-                                .Select(x => x.DesignMatchingId)
-                                .ToList()
+                    SelectedMatchingNo = program.ProgramMatchings.Select(x => x.MatchingNo).Distinct().ToList()
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
@@ -135,8 +133,8 @@ namespace Inventory.Web.Controllers
         public async Task<IActionResult> Save(ProgramVM model)
         {
             // Validate matchings
-            if (model.SelectedMatchingIds == null || !model.SelectedMatchingIds.Any())
-                ModelState.AddModelError(nameof(model.SelectedMatchingIds), "Please select at least one matching.");
+            if (model.SelectedMatchingNo == null || !model.SelectedMatchingNo.Any())
+                ModelState.AddModelError(nameof(model.SelectedMatchingNo), "Please select at least one matching.");
 
             if (!ModelState.IsValid)
             {
@@ -145,9 +143,9 @@ namespace Inventory.Web.Controllers
                 return View("AddEdit", model);
             }
 
-            var vDesignMatchingList = await _db.DesignMatchings
-                .Where(m => model.SelectedMatchingIds!.Contains(m.DesignMatchingId))
-                .ToListAsync();
+            //var vDesignMatchingList = await _db.DesignMatchings
+            //    .Where(m => model.SelectedMatchingNo!.Contains(m.MatchingNo))
+            //    .ToListAsync();
 
             if (model.ProgramId == 0)
             {
@@ -166,6 +164,10 @@ namespace Inventory.Web.Controllers
                     Rate = model.Rate,
                     DesignId = model.DesignId
                 };
+
+                var vDesignMatchingList = await _db.DesignPlates.Where(x => x.DesignId == model.DesignId)
+                        .SelectMany(x => x.DesignMatchings).Where(m => model.SelectedMatchingNo!.Contains(m.MatchingNo))
+                        .ToListAsync();
 
                 await _db.Program.AddAsync(program);
                 await _db.SaveChangesAsync();
@@ -204,6 +206,10 @@ namespace Inventory.Web.Controllers
                 vProgram.Round = model.Round;
                 vProgram.Rate = model.Rate;
                 vProgram.DesignId = model.DesignId;
+
+                var vDesignMatchingList = await _db.DesignPlates.Where(x => x.DesignId == model.DesignId)
+                        .SelectMany(x => x.DesignMatchings).Where(m => model.SelectedMatchingNo!.Contains(m.MatchingNo))
+                        .ToListAsync();
 
                 _db.ProgramMatchings.RemoveRange(vProgram.ProgramMatchings);
 
