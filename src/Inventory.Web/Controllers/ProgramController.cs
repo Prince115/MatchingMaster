@@ -114,7 +114,7 @@ namespace Inventory.Web.Controllers
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
-                ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", program.DesignId);
+                ViewBag.DesignList = _db.Designs;
 
                 if (item == null)
                     return NotFound();
@@ -262,7 +262,6 @@ namespace Inventory.Web.Controllers
         {
             var data = _db.DesignPlates.Where(x => x.DesignId == designId)
                     .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
-
 
             return Json(data);
         }

@@ -4,6 +4,8 @@
 	ViewData["Title"] = ViewBag.Action + " Program";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	bool isEdit = Model.ProgramId > 0;
+	var DesignList = new SelectList(ViewBag.DesignList, "DesignId", "DesignNo", Model.DesignId);
+
 }
 
 <div class="card shadow-sm">
