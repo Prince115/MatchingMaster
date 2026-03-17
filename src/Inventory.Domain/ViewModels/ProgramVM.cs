@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Inventory.Domain.ViewModels
 {
@@ -25,7 +22,7 @@ namespace Inventory.Domain.ViewModels
         public string? Remarks { get; set; }
         public string? Rate { get; set; }
         public DateOnly Date { get; set; }
-        public int? MainCut { get; set; }
+        public decimal? MainCut { get; set; }
         public int? Quantity { get; set; }
         public int? Round { get; set; }
 

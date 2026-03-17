@@ -15,7 +15,7 @@ namespace Inventory.Domain.Entities
         public string? Quality { get; set; }
 
         public DateOnly Date { get; set; }
-        public int? MainCut { get; set; }
+        public decimal? MainCut { get; set; }
         public string? Fold { get; set; }
         public string? Finishing { get; set; }
         public int? Quantity { get; set; }
