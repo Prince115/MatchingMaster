@@ -54,5 +54,8 @@ namespace Inventory.Domain.ViewModels
         public int PlateId { get; set; }
         public int MatchingNo { get; set; }
         public string Colour { get; set; } = string.Empty;
+
+        [ValidateNever]
+        public string PlateName { get; set; }
     }
 }

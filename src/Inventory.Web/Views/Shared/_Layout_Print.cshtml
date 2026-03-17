@@ -1,0 +1,80 @@
+﻿@{
+    string pageSize = ViewBag.PageSize ?? "A4";
+    string pageOrientation = ViewBag.PageOrientation ?? "portrait";
+    string pageMargin = ViewBag.PageMargin ?? "10mm 15mm 10mm 15mm";
+    string fontSize = ViewBag.FontSize ?? "12pt";
+    string fontFamily = ViewBag.FontFamily ?? "Arial, sans-serif";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        /* ── Page Setup ──────────────────────────────────────── */
+        @@page {
+            size: @pageSize @pageOrientation;
+            margin: @pageMargin;
+        }
+
+        /* ── Base ────────────────────────────────────────────── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: @fontFamily;
+            font-size: @fontSize;
+            color: #000;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.bordered th,
+        table.bordered td {
+            border: 1px solid #555;
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        table.borderless th,
+        table.borderless td {
+            border: none;
+            padding: 3px 6px;
+            text-align: left;
+        }
+
+        thead { display: table-header-group; }
+
+        .text-center  { text-align: center; }
+        .text-right   { text-align: right; }
+        .text-bold    { font-weight: bold; }
+        .text-muted   { color: #555; }
+
+        @@media print {
+            .no-print        { display: none !important; }
+            tr               { page-break-inside: avoid; }
+            .break-before    { page-break-before: always; }
+            .break-after     { page-break-after:  always; }
+            .no-break        { page-break-inside: avoid; }
+        }
+    </style>
+
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</body>
+</html>

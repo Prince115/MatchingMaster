@@ -256,6 +256,44 @@ namespace Inventory.Web.Controllers
         #endregion
 
 
+        #region Print
+        public async Task<IActionResult> Print(int ProgramId)
+        {
+            var vModel = await _db.Program.Where(x => x.ProgramId == ProgramId)
+                .Select(x => new ProgramVM
+                {
+                    ProgramId = x.ProgramId,
+                    ProgramNo = x.ProgramNo,
+                    PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
+                    DesignNo = _db.Designs.Where(d => d.DesignId == x.DesignId).Select(d => d.DesignNo).FirstOrDefault(),
+                    Quality = x.Quality,
+                    Date = x.Date,
+                    MainCut = x.MainCut,
+                    Fold = x.Fold,
+                    Finishing = x.Finishing,
+                    Quantity = x.Quantity,
+                    Remarks = x.Remarks,
+                    Round = x.Round,
+                    Rate = x.Rate,
+                }).FirstOrDefaultAsync();
+
+            ViewBag.MatchingList = await _db.ProgramMatchings.Where(m => m.ProgramId == ProgramId)
+                .Select(m => new ProgramMatchingVM
+                {
+                    MatchingNo = m.MatchingNo,
+                    Colour = m.Colour,
+                    DesignMatchingId = m.DesignMatchingId,
+                    PlateId = m.PlateId,
+                    PlateName = _db.DesignPlates.Where(p => p.DesignPlateId == m.PlateId).Select(p => p.PlateName).FirstOrDefault(),
+                    DesignId = m.DesignId
+                }).ToListAsync();
+
+
+            return View("Print_DesignMatching", vModel);
+        }
+        #endregion
+
+
         #region GetMatchingByDesign
         [HttpGet]
         public async Task<IActionResult> GetMatchingByDesign(int designId)

@@ -1,0 +1,91 @@
+﻿@using Inventory.Domain.ViewModels
+@model ProgramVM
+
+@{
+	Layout = "~/Views/Shared/_Layout_Print.cshtml";
+
+	ViewBag.PageSize = "A4";
+	ViewBag.PageOrientation = "landscape";
+	ViewBag.PageMargin = "8mm 10mm 8mm 10mm";
+	ViewBag.FontSize = "12pt";
+	ViewData["Title"] = "Design Matching - " + Model.ProgramNo;
+
+	List<ProgramMatchingVM> vProgramMatching = ViewBag.MatchingList;
+
+	var vMatchingNoList = vProgramMatching.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
+	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
+}
+
+@section styles {
+	<style>
+
+	</style>
+}
+
+
+<div class="row">
+	<div class="col-12">
+		<table style="width:100%; border-collapse:collapse;">
+			<tr>
+				<td style="width:25%; padding:6px 0;">
+					<strong>Quality</strong> : @Model.Quality
+				</td>
+				<td style="width:25%; padding:6px 0;">
+					<strong>Design No</strong> : @Model.DesignNo
+				</td>
+				<td style="width:30%; padding:6px 0;">
+					<strong>Party</strong> : @Model.PartyName
+				</td>
+				<td style="width:20%; padding:6px 0; text-align:right;">
+					<strong>Date</strong> : @Model.Date.ToString("dd MMM yyyy")
+				</td>
+			</tr>
+		</table>
+
+	</div>
+	<hr style="border:none; border-top:1px solid #000;" />
+
+	<div class="col-12">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th class="bg-light">Plate Name</th>
+					<th class="bg-light text-center"></th>
+					@foreach (var vMatchingNo in vMatchingNoList)
+					{
+						<th class="bg-light">M-@vMatchingNo.MatchingNo</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					int i = 0;
+				}
+				@foreach (var item in vPlateList)
+				{
+					i++;
+					<tr>
+						<td>@item.PlateName</td>
+						<td class="text-center">@i</td>
+						@foreach (var vMatchingNo in vMatchingNoList)
+						{
+							<td>@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault().Colour</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+@section scripts {
+	<script>
+		window.onload = function () {
+			window.print();
+			window.onafterprint = function () {
+				window.close();
+			};
+		};
+	</script>
+}

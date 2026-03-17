@@ -73,6 +73,12 @@
                                 <td>@item.Date.ToString("dd-MM-yyyy")</td>
 
                                 <td class="text-center">
+                                    <a asp-action="Print"
+                                           asp-route-ProgramId="@item.ProgramId"
+                                           target="_blank"
+                                           class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-printer"></i>
+                                    </a>
 
                                     <a asp-controller="Program"
                                            asp-action="AddEdit"
