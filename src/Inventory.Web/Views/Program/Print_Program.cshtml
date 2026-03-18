@@ -1,0 +1,181 @@
+﻿@using Inventory.Domain.ViewModels
+@model ProgramVM
+
+@{
+	Layout = "~/Views/Shared/_Layout_Print.cshtml";
+
+	ViewBag.PageSize = "A4";
+	ViewBag.PageOrientation = "portrait";
+	ViewBag.PageMargin = "8mm 10mm 8mm 10mm";
+	ViewBag.FontSize = "12pt";
+	ViewData["Title"] = "Program - " + Model.ProgramNo;
+
+	List<ProgramMatchingVM> vProgramMatching = ViewBag.MatchingList;
+
+	var vMatchingNoList = vProgramMatching.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
+	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
+}
+
+@section styles {
+	<style>
+		.text-theme {
+			color: #c0544b !important
+		}
+
+	</style>
+}
+
+
+<div class="border border-danger min-vh-100 p-3">
+
+	<div class="row align-items-center mb-2">
+		<div class="col-12">
+			<div class="d-flex justify-content-between text-center text-theme small mb-1">
+				<div>॥ SHREE HINGLAJ MATAJI ॥</div>
+				<div>॥ SHREE GANESHAY NAMH ॥</div>
+				<div>॥ SHREE SWAMINARAYAN ॥</div>
+			</div>
+
+
+			<div class="row mb-2 align-items-center">
+				<div class="col-3 text-center">
+					<img src="~/assets/Images/logo.png" class="img-fluid" style="max-height:90px;">
+					</div>
+					<div class="col-3 text-center text-theme">
+						<div class="fw-bold" style="font-size:40px;">Mitshu</div>
+						<div class="fw-semibold">TEXTILE</div>
+					</div>
+					<div class="col-6">
+						<div class="border border-danger rounded p-2 small">
+							<table class="table table-sm table-borderless mb-0 align-middle">
+								<tr>
+									<td class="text-theme" style="width:30px;">
+										<i class="bi bi-telephone-fill"></i>
+									</td>
+									<td class="text-theme text-start">
+										+91 94264 80404 | 94095 30045
+									</td>
+								</tr>
+								<tr>
+									<td class="text-theme">
+										<i class="bi bi-geo-alt-fill"></i>
+									</td>
+									<td class="text-theme text-start">
+										Khirasara road, Mahadev Nagar,<br>
+										Street No.2, Jetpur 360 370
+									</td>
+								</tr>
+								<tr>
+									<td class="text-theme">
+										<i class="bi bi-envelope-at-fill"></i>
+									</td>
+									<td class="text-theme text-start">
+										mitshutextile@gmail.com
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="row border-top border-bottom py-2 mb-3">
+					<div class="col-8 text-theme">
+						<strong>PARTY NAME :</strong> @Model.PartyName
+					</div>
+					<div class="col-4 text-theme text-end">
+						<strong>PROGRAM NO :</strong> @Model.ProgramNo
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-8">
+						<table class="table table-bordered">
+							<thead class="text-theme text-center">
+								<tr>
+									<th class="text-theme" colspan="2">PROGRAM DETAILS</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-theme">
+										<b>Quality</b>
+									</td>
+									<td class="text-theme">@Model.Quality</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Main Cut</b></td>
+									<td class="text-theme">@Model.MainCut</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Fold</b></td>
+									<td class="text-theme">@Model.Fold</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Finishing</b></td>
+									<td class="text-theme">@Model.Finishing</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Round</b></td>
+									<td class="text-theme">@Model.Round</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Rate</b></td>
+									<td class="text-theme">@Model.Rate</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Quantity</b></td>
+									<td class="text-theme">@Model.Quantity</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Remarks</b></td>
+									<td class="text-theme">@Model.Remarks</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="col-4">
+						<table class="table table-bordered">
+							<thead class="text-center">
+								<tr>
+									<th class="text-theme">SUMMARY</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-theme"><b>Design No :</b> @Model.DesignNo</td>
+								</tr>
+								<tr>
+									<td class="text-theme">
+										<b>Matchings :</b>
+										<br />
+										<ul class="mb-0">
+											@foreach (var vMatchingNo in vMatchingNoList)
+											{
+												<li>M-@vMatchingNo.MatchingNo</li>
+											}
+										</ul>
+									</td>
+								</tr>
+								<tr>
+									<td class="text-theme"><b>Date :</b> @Model.Date.ToString("dd-MM-yyyy")</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@section scripts {
+		<script>
+			window.onload = function () {
+				window.print();
+				 window.onafterprint = function () {
+					window.close();
+				 };
+			};
+		</script>
+	}

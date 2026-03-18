@@ -8,7 +8,7 @@
 	ViewBag.PageOrientation = "landscape";
 	ViewBag.PageMargin = "8mm 10mm 8mm 10mm";
 	ViewBag.FontSize = "12pt";
-	ViewData["Title"] = "Design Matching - " + Model.ProgramNo;
+	ViewData["Title"] = "Program - " + Model.ProgramNo;
 
 	List<ProgramMatchingVM> vProgramMatching = ViewBag.MatchingList;
 
@@ -18,74 +18,108 @@
 
 @section styles {
 	<style>
-
+		.text-theme {
+			color: #c0544b !important
+		}
 	</style>
 }
 
-
 <div class="row">
 	<div class="col-12">
-		<table style="width:100%; border-collapse:collapse;">
+		<table class="table table-borderless align-middle text-center" style="width: 100%;">
 			<tr>
-				<td style="width:25%; padding:6px 0;">
-					<strong>Quality</strong> : @Model.Quality
-				</td>
-				<td style="width:25%; padding:6px 0;">
-					<strong>Design No</strong> : @Model.DesignNo
-				</td>
-				<td style="width:30%; padding:6px 0;">
-					<strong>Party</strong> : @Model.PartyName
-				</td>
-				<td style="width:20%; padding:6px 0; text-align:right;">
-					<strong>Date</strong> : @Model.Date.ToString("dd MMM yyyy")
-				</td>
-			</tr>
-		</table>
 
-	</div>
-	<hr style="border:none; border-top:1px solid #000;" />
+				<!-- Left -->
+				<td class="text-start text-theme" width="25%">
+					<small class="d-block">॥ શ્રી હિંગલાજ માતાજી ॥</small>
+					<div class="fw-semibold">
+						Maulikbhai <br>
+						Mo. 94095 30045
+					</div>
+				</td>
 
-	<div class="col-12">
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th class="bg-light">Plate Name</th>
-					<th class="bg-light text-center"></th>
-					@foreach (var vMatchingNo in vMatchingNoList)
-					{
-						<th class="bg-light">M-@vMatchingNo.MatchingNo</th>
-					}
+				<!-- Center -->
+				<td class="text-theme" width="50%">
+					<small class="d-block">॥ શ્રી ગણેશાય નમઃ ॥</small>
+
+					<!-- Logo -->
+					<img src="~/assets/Images/logo.png" alt="Logo" class="img-fluid" style="max-height:70px;">
+					</td>
+
+					<!-- Right -->
+					<td class="text-end text-theme" width="25%">
+						<small class="d-block">॥ શ્રી સ્વામિનારાયણ ॥</small>
+						<div class="fw-semibold">
+							Jasminbhai <br>
+							Mo. 73830 86867
+						</div>
+					</td>
+
 				</tr>
-			</thead>
-			<tbody>
-				@{
-					int i = 0;
-				}
-				@foreach (var item in vPlateList)
-				{
-					i++;
-					<tr>
-						<td>@item.PlateName</td>
-						<td class="text-center">@i</td>
+			</table>
+	</div>
+		<div class="col-12">
+			<table style="width:100%; border-collapse:collapse;">
+				<tr>
+					<td class="text-theme" style="width:25%; padding:6px 0;">
+						<strong>ક્વોલિટી</strong> : @Model.Quality
+					</td>
+					<td class="text-theme" style="width:25%; padding:6px 0;">
+						<strong>ડિ. નં.</strong> : @Model.DesignNo
+					</td>
+					<td class="text-theme" style="width:30%; padding:6px 0;">
+						<strong>પાર્ટી</strong> : @Model.PartyName
+					</td>
+					<td class="text-theme" style="width:20%; padding:6px 0; text-align:right;">
+						<strong>તારીખ</strong> : @Model.Date.ToString("dd MMM yyyy")
+					</td>
+				</tr>
+			</table>
+
+		</div>
+		<hr style="border:none; border-top:1px solid #000;" />
+
+		<div class="col-12">
+			<table class="table table-bordered text-theme">
+				<thead>
+					<tr class="">
+						<th class="text-theme">Plate Name</th>
+						<th class="text-theme text-center"></th>
 						@foreach (var vMatchingNo in vMatchingNoList)
 						{
-							<td>@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault().Colour</td>
+							<th class="text-theme">M-@vMatchingNo.MatchingNo</th>
 						}
 					</tr>
-				}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					@{
+						int i = 0;
+					}
+					@foreach (var item in vPlateList)
+					{
+						i++;
+						<tr>
+							<td class="text-theme">@item.PlateName</td>
+							<td class="text-theme text-center">@i</td>
+							@foreach (var vMatchingNo in vMatchingNoList)
+							{
+								<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault().Colour</td>
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
 	</div>
-</div>
 
 
-@section scripts {
-	<script>
-		window.onload = function () {
-			window.print();
-			window.onafterprint = function () {
-				window.close();
+	@section scripts {
+		<script>
+			window.onload = function () {
+				window.print();
+				 window.onafterprint = function () {
+					window.close();
+				 };
 			};
-		};
-	</script>
-}
+		</script>
+	}

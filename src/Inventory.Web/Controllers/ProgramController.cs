@@ -113,7 +113,7 @@ namespace Inventory.Web.Controllers
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
-                ViewBag.DesignList = _db.Designs;
+                ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", program.DesignId);
 
                 if (item == null)
                     return NotFound();
@@ -256,7 +256,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Print
-        public async Task<IActionResult> Print(int ProgramId)
+        public async Task<IActionResult> Print(int ProgramId,string PrintView)
         {
             var vModel = await _db.Program.Where(x => x.ProgramId == ProgramId)
                 .Select(x => new ProgramVM
@@ -288,7 +288,14 @@ namespace Inventory.Web.Controllers
                 }).ToListAsync();
 
 
-            return View("Print_DesignMatching", vModel);
+            if(PrintView == "DesignMatching")
+            {
+                return View("Print_DesignMatching", vModel);
+            }
+            else
+            {
+                return View("Print_Program", vModel);
+            }
         }
         #endregion
 
