@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Domain.ViewModels
 {
@@ -9,7 +6,7 @@ namespace Inventory.Domain.ViewModels
     {
         public int DesignId { get; set; }
         public string? DesignNo { get; set; }
-        public DateOnly Date { get; set; }
+        public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         public int? PartyId { get; set; }
         public int Plates { get; set; }
         public int Matching { get; set; }
