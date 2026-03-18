@@ -71,7 +71,7 @@ namespace Inventory.Web.Controllers
         {
             ViewBag.Action = "Add";
             ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName");
-            ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo");
+            ViewBag.DesignList = _db.Designs;
 
             var vPreviousProgram = await _db.Program.OrderByDescending(x => x.ProgramId).FirstOrDefaultAsync();
             int vNextProgramNo = 1;
