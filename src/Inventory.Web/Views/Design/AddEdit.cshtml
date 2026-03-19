@@ -79,6 +79,12 @@
 						</button>
 					</div>
 				}
+
+				<div class="col-md-2">
+					<button type="button" class="btn btn-primary w-100" id="btnAddMatching">
+						<i class="bi bi-plus"></i> Add Matching
+					</button>
+				</div>
 			</div>
 
 			<hr class="m-0" />
@@ -118,145 +124,223 @@
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
 
-	<script>
-		(function () {
-			// ── DOM refs ──────────────────────────────────────────────────────
-			const btnGenerate = document.getElementById('btnGenerate');
-			const tableWrap   = document.getElementById('tableWrap');
-			const headMain    = document.getElementById('headMain');
-			const headSub     = document.getElementById('headSub');
-			const tableBody   = document.getElementById('tableBody');
-			const btnSave     = document.getElementById('btnSave');
+    <script>
+        (function () {
+            const btnGenerate    = document.getElementById('btnGenerate');
+            const btnAddMatching = document.getElementById('btnAddMatching');
+            const tableWrap      = document.getElementById('tableWrap');
+            const headMain       = document.getElementById('headMain');
+            const headSub        = document.getElementById('headSub');
+            const tableBody      = document.getElementById('tableBody');
+            const btnSave        = document.getElementById('btnSave');
 
-			// ── Server data injected from Razor ──────────────────────────────
-			// null on Add mode, full rows array on Edit mode
-			const serverRows = @Html.Raw(Model?.Rows != null && Model.Rows.Count > 0
-				? System.Text.Json.JsonSerializer.Serialize(Model.Rows)
-				: "null");
+            const serverRows = @Html.Raw(Model?.Rows != null && Model.Rows.Count > 0
+                            ? System.Text.Json.JsonSerializer.Serialize(Model.Rows)
+                            : "null");
 
-			const isEdit = @Html.Raw(isEdit ? "true" : "false");
+            const isEdit = @Html.Raw(isEdit ? "true" : "false");
 
-			// ── AUTO-BUILD on Edit mode ───────────────────────────────────────
-			if (isEdit && serverRows && serverRows.length > 0) {
-				const mCount = serverRows[0].Matchings ? serverRows[0].Matchings.length : 0;
-				buildTable(mCount, serverRows);
-			}
+            // ── AUTO-BUILD on Edit mode ───────────────────────────────────────────
+            if (isEdit && serverRows && serverRows.length > 0) {
+                const mCount = serverRows[0].Matchings ? serverRows[0].Matchings.length : 0;
+                buildTable(mCount, serverRows);
+            }
 
-			// ── Generate button (Add mode only) ──────────────────────────────
-			if (btnGenerate) {
-				btnGenerate.addEventListener('click', function () {
-					const plates   = parseInt(document.getElementById('Plates').value, 10) || 4;
-					const matching = parseInt(document.getElementById('Matching').value, 10) || 6;
-					buildTable(matching, null, plates);
-				});
-			}
+            // ── Generate button (Add mode only) ──────────────────────────────────
+            if (btnGenerate) {
+                btnGenerate.addEventListener('click', function () {
+                    const plates   = parseInt(document.getElementById('Plates').value, 10) || 4;
+                    const matching = parseInt(document.getElementById('Matching').value, 10) || 6;
+                    buildTable(matching, null, plates);
+                });
+            }
 
-			// ── Core build function ───────────────────────────────────────────
-			// mCount      = number of matching columns
-			// existingRows = array from server (edit) or null (add)
-			// plates      = row count when adding fresh
-			function buildTable(mCount, existingRows, plates) {
+            // ── Add Matching button — preserves existing data ─────────────────────
+            if (btnAddMatching) {
+                btnAddMatching.addEventListener('click', function () {
 
-				// Reset header — keep first 2 fixed <th> (Plate Name, No)
-				while (headMain.children.length > 2)
-					headMain.removeChild(headMain.lastChild);
-				headSub.innerHTML   = '';
-				tableBody.innerHTML = '';
+                    const platesInput   = document.getElementById('Plates');
+                    const matchingInput = document.getElementById('Matching');
 
-				// Matching column headers
-				for (let m = 0; m < mCount; m++) {
-					const th = document.createElement('th');
-					th.textContent = 'M' + (m + 1);
-					th.classList.add('bg-light', 'fw-bold');
-					headMain.appendChild(th);
+                    const plates   = parseInt(platesInput.value,   10) || 4;
+                    let   matching = parseInt(matchingInput.value, 10) || 6;
 
-					['Color'].forEach(label => {
-						const sub = document.createElement('th');
-						sub.textContent = label;
-						sub.classList.add('bg-light', 'fw-bold');
-						headSub.appendChild(sub);
-					});
-				}
+                    // ── STEP 1: Save all current input values ─────────────────
+                    const savedData = saveCurrentTableData();
 
-				// Rows
-				const rowCount = existingRows ? existingRows.length : (plates || 4);
+                    // ── STEP 2: Increment matching count ──────────────────────
+                    matching += 1;
+                    matchingInput.value = matching;
 
-				for (let r = 0; r < rowCount; r++) {
-					const row = existingRows ? existingRows[r] : null;
-					const tr  = document.createElement('tr');
+                    // ── STEP 3: Rebuild table with new column count ───────────
+                    buildTable(matching, null, plates);
 
-					// ── KEY: hidden DesignPlateId for edit (0 = new row) ──────
-					tr.appendChild(hiddenInput(`Rows[${r}].DesignPlateId`,
-						row?.DesignPlateId ?? 0));
+                    // ── STEP 4: Restore saved values back ─────────────────────
+                    restoreTableData(savedData);
+                    // New last column stays empty — user fills it in
+                });
+            }
 
-					// Plate Name
-					tr.innerHTML += `
-						<td class="text-start">
-							<input class="form-control form-control-sm"
-								   style="min-width:180px"
-								   name="Rows[${r}].PlateName"
-								   value="${escHtml(row?.PlateName)}"
-								   placeholder="Enter Plate Name" />
-						</td>`;
+            // ── Save current table data before rebuild ────────────────────────────
+            function saveCurrentTableData() {
+                const savedData = [];
 
-					// Plate No (display + hidden)
-					const plateNo = row?.PlateNo ?? (r + 1);
-					tr.innerHTML += `
-						<td class="fw-semibold">
-							${r + 1}
-							<input type="hidden" name="Rows[${r}].PlateNo" value="${plateNo}" />
-						</td>`;
+                document.querySelectorAll('#tableBody tr').forEach((tr, r) => {
 
-					// Matching cells
-					for (let m = 0; m < mCount; m++) {
-						const cell = row?.Matchings?.[m] ?? null;
+                    const row = {
+                        plateId   : getVal(tr, `Rows[${r}].DesignPlateId`),
+                        plateName : getVal(tr, `Rows[${r}].PlateName`),
+                        plateNo   : getVal(tr, `Rows[${r}].PlateNo`),
+                        matchings : []
+                    };
 
-						// ── KEY: hidden DesignMatchingId (0 = new cell) ───────
-						tr.appendChild(hiddenInput(
-							`Rows[${r}].Matchings[${m}].DesignMatchingId`,
-							cell?.DesignMatchingId ?? 0));
+                    let m = 0;
+                    while (true) {
+                        const matchingIdInput = tr.querySelector(`input[name="Rows[${r}].Matchings[${m}].DesignMatchingId"]`);
+                        const colourInput     = tr.querySelector(`input[name="Rows[${r}].Matchings[${m}].Colour"]`);
+                        if (!colourInput) break;
 
-						tr.appendChild(hiddenInput(
-							`Rows[${r}].Matchings[${m}].MatchingNo`, m + 1));
+                        row.matchings.push({
+                            designMatchingId : matchingIdInput ? matchingIdInput.value : 0,
+                            colour           : colourInput.value
+                        });
+                        m++;
+                    }
 
-						tr.innerHTML += `
-							<td>
-								<input class="form-control form-control-sm"
-									   style="min-width:120px"
-									   name="Rows[${r}].Matchings[${m}].Colour"
-									   value="${escHtml(cell?.Colour)}"
-									   placeholder="Colour" />
-							</td>`;
-					}
+                    savedData.push(row);
+                });
 
-					tableBody.appendChild(tr);
-				}
+                return savedData;
+            }
 
-				tableWrap.classList.remove('d-none');
-				btnSave.disabled = false;
-			}
+            // ── Restore saved data into rebuilt table ─────────────────────────────
+            function restoreTableData(savedData) {
+                savedData.forEach((row, r) => {
+                    const tr = document.querySelector(`#tableBody tr:nth-child(${r + 1})`);
+                    if (!tr) return;
 
-			// ── Helpers ───────────────────────────────────────────────────────
+                    // Restore plate fields
+                    setVal(tr, `Rows[${r}].DesignPlateId`, row.plateId);
+                    setVal(tr, `Rows[${r}].PlateName`,     row.plateName);
+                    setVal(tr, `Rows[${r}].PlateNo`,        row.plateNo);
 
-			// Create a hidden <input> element (avoids innerHTML injection issues)
-			function hiddenInput(name, value) {
-				const el = document.createElement('input');
-				el.type  = 'hidden';
-				el.name  = name;
-				el.value = value ?? 0;
-				return el;
-			}
+                    // Restore matching cells (existing ones only, new last column stays empty)
+                    row.matchings.forEach((cell, m) => {
+                        setVal(tr, `Rows[${r}].Matchings[${m}].DesignMatchingId`, cell.designMatchingId);
+                        setVal(tr, `Rows[${r}].Matchings[${m}].Colour`,           cell.colour);
+                    });
+                });
+            }
 
-			// Safely escape values written into HTML attribute strings
-			function escHtml(str) {
-				if (str == null) return '';
-				return String(str)
-					.replace(/&/g, '&amp;')
-					.replace(/"/g, '&quot;')
-					.replace(/</g, '&lt;')
-					.replace(/>/g, '&gt;');
-			}
+            // ── Core build function ───────────────────────────────────────────────
+            function buildTable(mCount, existingRows, plates) {
 
-		})();
-	</script>
+                // Reset headers — keep first 2 fixed <th> (Plate Name, No)
+                while (headMain.children.length > 2)
+                    headMain.removeChild(headMain.lastChild);
+                headSub.innerHTML   = '';
+                tableBody.innerHTML = '';
+
+                // Build matching column headers
+                for (let m = 0; m < mCount; m++) {
+                    const th = document.createElement('th');
+                    th.textContent = 'M' + (m + 1);
+                    th.classList.add('bg-light', 'fw-bold');
+                    headMain.appendChild(th);
+
+                    const sub = document.createElement('th');
+                    sub.textContent = 'Color';
+                    sub.classList.add('bg-light', 'fw-bold');
+                    headSub.appendChild(sub);
+                }
+
+                // Build rows
+                const rowCount = existingRows ? existingRows.length : (plates || 4);
+
+                for (let r = 0; r < rowCount; r++) {
+                    const row = existingRows ? existingRows[r] : null;
+                    const tr  = document.createElement('tr');
+
+                    // Hidden DesignPlateId (0 = new row)
+                    tr.appendChild(hiddenInput(`Rows[${r}].DesignPlateId`, row?.DesignPlateId ?? 0));
+
+                    // Plate Name
+                    tr.innerHTML += `
+                        <td class="text-start">
+                            <input class="form-control form-control-sm"
+                                   style="min-width:180px"
+                                   name="Rows[${r}].PlateName"
+                                   value="${escHtml(row?.PlateName)}"
+                                   placeholder="Enter Plate Name" />
+                        </td>`;
+
+                    // Plate No
+                    const plateNo = row?.PlateNo ?? (r + 1);
+                    tr.innerHTML += `
+                        <td class="fw-semibold">
+                            ${r + 1}
+                            <input type="hidden" name="Rows[${r}].PlateNo" value="${plateNo}" />
+                        </td>`;
+
+                    // Matching cells
+                    for (let m = 0; m < mCount; m++) {
+                        const cell = row?.Matchings?.[m] ?? null;
+
+                        tr.appendChild(hiddenInput(
+                            `Rows[${r}].Matchings[${m}].DesignMatchingId`,
+                            cell?.DesignMatchingId ?? 0));
+
+                        tr.appendChild(hiddenInput(
+                            `Rows[${r}].Matchings[${m}].MatchingNo`, m + 1));
+
+                        tr.innerHTML += `
+                            <td>
+                                <input class="form-control form-control-sm"
+                                       style="min-width:120px"
+                                       name="Rows[${r}].Matchings[${m}].Colour"
+                                       value="${escHtml(cell?.Colour)}"
+                                       placeholder="Colour" />
+                            </td>`;
+                    }
+
+                    tableBody.appendChild(tr);
+                }
+
+                tableWrap.classList.remove('d-none');
+                btnSave.disabled = false;
+            }
+
+            // Get input value by name inside a row
+            function getVal(tr, name) {
+                const el = tr.querySelector(`input[name="${name}"]`);
+                return el ? el.value : '';
+            }
+
+            // Set input value by name inside a row
+            function setVal(tr, name, value) {
+                const el = tr.querySelector(`input[name="${name}"]`);
+                if (el) el.value = value ?? '';
+            }
+
+            // Create hidden input element
+            function hiddenInput(name, value) {
+                const el = document.createElement('input');
+                el.type  = 'hidden';
+                el.name  = name;
+                el.value = value ?? 0;
+                return el;
+            }
+
+            // Escape HTML attribute values
+            function escHtml(str) {
+                if (str == null) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }
+
+        })();
+    </script>
 }

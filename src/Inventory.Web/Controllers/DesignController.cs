@@ -183,14 +183,27 @@ namespace Inventory.Web.Controllers
                     plate.PlateName = row.PlateName;
                     plate.PlateNo = row.PlateNo;
 
+                    int matchNo = 1;
                     foreach (var cell in row.Matchings)
                     {
                         var matching = plate.DesignMatchings
-                            .FirstOrDefault(m => m.DesignMatchingId == cell.DesignMatchingId);
+                            .FirstOrDefault(m => m.DesignMatchingId == cell.DesignMatchingId
+                                             && cell.DesignMatchingId != 0);
 
-                        if (matching == null) continue; // safety check
-
-                        matching.Colour = cell.Colour;
+                        if (matching != null)
+                        {
+                            // Existing → UPDATE
+                            matching.MatchingNo = matchNo++;
+                            matching.Colour = cell.Colour;
+                        }
+                        else
+                        {
+                            plate.DesignMatchings.Add(new DesignMatching
+                            {
+                                MatchingNo = matchNo++,
+                                Colour = cell.Colour
+                            });
+                        }
                     }
                 }
             }

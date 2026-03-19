@@ -36,7 +36,7 @@
 
                     @if (Model.Items.Any())
                     {
-                        foreach (var item in Model.Items)
+                        foreach (var item in Model.Items.OrderBy(x => x.DesignNo))
                         {
                             <tr>
                                 <td>@item.DesignNo</td>

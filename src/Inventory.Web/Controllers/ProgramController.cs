@@ -113,7 +113,7 @@ namespace Inventory.Web.Controllers
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
-                ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", program.DesignId);
+                //ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", program.DesignId);
 
                 if (item == null)
                     return NotFound();

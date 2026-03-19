@@ -58,7 +58,7 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Catalogues");
+                    b.ToTable("Catalogues", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Design", b =>
@@ -82,7 +82,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("PartyId");
 
-                    b.ToTable("Designs");
+                    b.ToTable("Designs", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.DesignMatching", b =>
@@ -106,7 +106,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("DesignPlateId");
 
-                    b.ToTable("DesignMatchings");
+                    b.ToTable("DesignMatchings", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.DesignPlate", b =>
@@ -130,7 +130,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("DesignId");
 
-                    b.ToTable("DesignPlates");
+                    b.ToTable("DesignPlates", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.InventoryTransaction", b =>
@@ -157,7 +157,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("CatalogueId");
 
-                    b.ToTable("InventoryTransactions");
+                    b.ToTable("InventoryTransactions", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Party", b =>
@@ -183,7 +183,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("PartyId");
 
-                    b.ToTable("Party");
+                    b.ToTable("Party", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.ProgramEntry", b =>
@@ -237,7 +237,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("PartyId");
 
-                    b.ToTable("Program");
+                    b.ToTable("Program", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.ProgramMatching", b =>
@@ -271,7 +271,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("ProgramId");
 
-                    b.ToTable("ProgramMatchings");
+                    b.ToTable("ProgramMatchings", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Infrastructure.Entities.ApplicationUser", b =>
