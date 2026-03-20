@@ -180,13 +180,15 @@
 				</div>
 			</div>
 
-			<hr class="my-1" />
-			<div class="row">
-				<div class="col-12 d-flex justify-content-center">
-					<img src="~/uploads/programs/@Model.PhotoFileName" style="max-height:400px;" class="" />
+			@if (!string.IsNullOrWhiteSpace(Model.PhotoFileName))
+			{
+				<hr class="my-1" />
+				<div class="row">
+					<div class="col-12 d-flex justify-content-center">
+						<img src="~/uploads/programs/@Model.PhotoFileName" style="max-height:400px;" class="" />
+					</div>
 				</div>
-			</div>
-
+			}
 		</div>
 	</div>
 
