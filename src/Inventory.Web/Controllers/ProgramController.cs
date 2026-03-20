@@ -78,14 +78,14 @@ namespace Inventory.Web.Controllers
 
             if (vPreviousProgram != null)
             {
-                var vPreviousProgramNo = int.Parse(vPreviousProgram.ProgramNo.Substring(1));
+                var vPreviousProgramNo = int.Parse(vPreviousProgram.ProgramNo);
                 vNextProgramNo = vPreviousProgramNo + 1;
             }
 
             var vModel = new ProgramVM
             {
                 Date = DateOnly.FromDateTime(DateTime.Today),
-                ProgramNo = $"A{vNextProgramNo}"
+                ProgramNo = $"{vNextProgramNo}"
             };
 
             if (id != null)
