@@ -50,7 +50,6 @@
 				<div>॥ SHREE SWAMINARAYAN ॥</div>
 			</div>
 
-
 			<div class="row mb-2 align-items-center">
 				<div class="col-3 text-center">
 					<img src="~/assets/Images/logo.png" class="img-fluid" style="max-height:90px;">
@@ -92,61 +91,61 @@
 					</div>
 				</div>
 
-				<div class="row border-top border-bottom py-2 mb-3">
-					<div class="col-8 text-theme">
-						<strong>PARTY NAME :</strong> @Model.PartyName
-					</div>
-					<div class="col-4 text-theme text-end">
-						<strong>PROGRAM NO :</strong> @Model.ProgramNo
-					</div>
+			<div class="row border-top border-bottom py-2 mb-3">
+				<div class="col-8 text-theme">
+					<strong>PARTY NAME :</strong> @Model.PartyName
 				</div>
+				<div class="col-4 text-theme text-end">
+					<strong>PROGRAM NO :</strong> @Model.ProgramNo
+				</div>
+			</div>
 
-				<div class="row">
-					<div class="col-8">
-						<table class="table table-bordered">
-							<thead class="text-theme text-center">
-								<tr>
-									<th class="text-theme" colspan="2">PROGRAM DETAILS</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="text-theme">
-										<b>Quality</b>
-									</td>
-									<td class="text-theme">@Model.Quality</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Main Cut</b></td>
-									<td class="text-theme">@Model.MainCut</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Fold</b></td>
-									<td class="text-theme">@Model.Fold</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Finishing</b></td>
-									<td class="text-theme">@Model.Finishing</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Round</b></td>
-									<td class="text-theme">@Model.Round</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Rate</b></td>
-									<td class="text-theme">@Model.Rate</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Quantity</b></td>
-									<td class="text-theme">@Model.Quantity</td>
-								</tr>
-								<tr>
-									<td class="text-theme"><b>Remarks</b></td>
-									<td class="text-theme">@Model.Remarks</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+			<div class="row">
+				<div class="col-8">
+					<table class="table table-bordered">
+						<thead class="text-theme text-center">
+							<tr>
+								<th class="text-theme" colspan="2">PROGRAM DETAILS</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-theme">
+									<b>Quality</b>
+								</td>
+								<td class="text-theme">@Model.Quality</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Main Cut</b></td>
+								<td class="text-theme">@Model.MainCut</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Fold</b></td>
+								<td class="text-theme">@Model.Fold</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Finishing</b></td>
+								<td class="text-theme">@Model.Finishing</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Round</b></td>
+								<td class="text-theme">@Model.Round</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Rate</b></td>
+								<td class="text-theme">@Model.Rate</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Quantity</b></td>
+								<td class="text-theme">@Model.Quantity</td>
+							</tr>
+							<tr>
+								<td class="text-theme"><b>Remarks</b></td>
+								<td class="text-theme">@Model.Remarks</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
 					<div class="col-4">
 						<table class="table table-bordered">
@@ -180,6 +179,14 @@
 
 				</div>
 			</div>
+
+			<hr class="my-1" />
+			<div class="row">
+				<div class="col-12 d-flex justify-content-center">
+					<img src="~/uploads/programs/@Model.PhotoFileName" style="max-height:400px;" class="" />
+				</div>
+			</div>
+
 		</div>
 	</div>
 

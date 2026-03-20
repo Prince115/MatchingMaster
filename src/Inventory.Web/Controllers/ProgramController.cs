@@ -1,19 +1,23 @@
 ﻿using Inventory.Domain.Entities;
 using Inventory.Domain.ViewModels;
 using Inventory.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Web.Controllers
 {
+    [Authorize]
     public class ProgramController : Controller
     {
         #region DI
         private readonly ApplicationDbContext _db;
-        public ProgramController(ApplicationDbContext db)
+        private readonly IWebHostEnvironment _env;
+        public ProgramController(ApplicationDbContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
         #endregion
 
@@ -109,6 +113,7 @@ namespace Inventory.Web.Controllers
                     Round = program.Round,
                     Rate = program.Rate,
                     DesignId = program.DesignId,
+                    PhotoFileName = program.PhotoFileName,
                     SelectedMatchingNo = program.ProgramMatchings.Select(x => x.MatchingNo).Distinct().ToList()
                 };
 
@@ -142,9 +147,38 @@ namespace Inventory.Web.Controllers
                 return View("AddEdit", model);
             }
 
-            //var vDesignMatchingList = await _db.DesignMatchings
-            //    .Where(m => model.SelectedMatchingNo!.Contains(m.MatchingNo))
-            //    .ToListAsync();
+            #region Upload Photo & PDF
+            var uploads = Path.Combine(_env.WebRootPath, "uploads", "programs");
+            Directory.CreateDirectory(uploads);
+
+            // PHOTO
+            if (model.Photo != null && model.Photo.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var extension = Path.GetExtension(model.Photo.FileName).ToLower();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("Photo", "Only jpg, jpeg, png files allowed.");
+                    return View("AddEdit", model);
+                }
+
+                if (model.Photo.Length > 1 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("Photo", "File size must be under 1MB.");
+                    return View("AddEdit", model);
+                }
+
+                var fileName = $"photo_{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploads, fileName);
+
+                using var fs = System.IO.File.Create(filePath);
+                await model.Photo.CopyToAsync(fs);
+
+                model.PhotoFileName = fileName;
+            }
+            #endregion
+
 
             if (model.ProgramId == 0)
             {
@@ -161,7 +195,8 @@ namespace Inventory.Web.Controllers
                     Remarks = model.Remarks,
                     Round = model.Round,
                     Rate = model.Rate,
-                    DesignId = model.DesignId
+                    DesignId = model.DesignId,
+                    PhotoFileName = model.PhotoFileName
                 };
 
                 var vDesignMatchingList = await _db.DesignPlates.Where(x => x.DesignId == model.DesignId)
@@ -205,6 +240,9 @@ namespace Inventory.Web.Controllers
                 vProgram.Round = model.Round;
                 vProgram.Rate = model.Rate;
                 vProgram.DesignId = model.DesignId;
+
+                if (!string.IsNullOrEmpty(model.PhotoFileName))
+                    vProgram.PhotoFileName = model.PhotoFileName;
 
                 var vDesignMatchingList = await _db.DesignPlates.Where(x => x.DesignId == model.DesignId)
                         .SelectMany(x => x.DesignMatchings).Where(m => model.SelectedMatchingNo!.Contains(m.MatchingNo))
@@ -256,7 +294,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Print
-        public async Task<IActionResult> Print(int ProgramId,string PrintView)
+        public async Task<IActionResult> Print(int ProgramId, string PrintView)
         {
             var vModel = await _db.Program.Where(x => x.ProgramId == ProgramId)
                 .Select(x => new ProgramVM
@@ -274,6 +312,7 @@ namespace Inventory.Web.Controllers
                     Remarks = x.Remarks,
                     Round = x.Round,
                     Rate = x.Rate,
+                    PhotoFileName = x.PhotoFileName
                 }).FirstOrDefaultAsync();
 
             ViewBag.MatchingList = await _db.ProgramMatchings.Where(m => m.ProgramId == ProgramId)
@@ -288,7 +327,7 @@ namespace Inventory.Web.Controllers
                 }).ToListAsync();
 
 
-            if(PrintView == "DesignMatching")
+            if (PrintView == "DesignMatching")
             {
                 return View("Print_DesignMatching", vModel);
             }

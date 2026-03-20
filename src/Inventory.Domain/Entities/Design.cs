@@ -3,7 +3,7 @@
     public class Design
     {
         public int DesignId { get; set; }
-        public string? DesignNo { get; set; }
+        public int? DesignNo { get; set; }
         public int? PartyId { get; set; }
         public DateOnly Date { get; set; }
 

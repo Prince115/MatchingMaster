@@ -3,10 +3,12 @@ using Inventory.Domain.ViewModels;
 using Inventory.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Web.Controllers
 {
+    [Authorize]
     public class DesignController : Controller
     {
         #region DI

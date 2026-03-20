@@ -115,10 +115,10 @@
 						<tr>
 							<td class="text-theme">@item.PlateName</td>
 							<td class="text-theme text-center">@i</td>
-			@foreach (var vMatchingNo in vMatchingNoList)
-			{
-				<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
-			}
+							@foreach (var vMatchingNo in vMatchingNoList)
+							{
+								<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
+							}
 						</tr>
 					}
 				</tbody>

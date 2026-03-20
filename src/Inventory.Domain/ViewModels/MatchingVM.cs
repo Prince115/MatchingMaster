@@ -5,7 +5,7 @@ namespace Inventory.Domain.ViewModels
     public class MatchingVM
     {
         public int DesignId { get; set; }
-        public string? DesignNo { get; set; }
+        public int? DesignNo { get; set; }
         public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         public int? PartyId { get; set; }
         public int Plates { get; set; }

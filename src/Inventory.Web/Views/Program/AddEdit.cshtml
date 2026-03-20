@@ -19,12 +19,15 @@
 	</div>
 
 	<div class="card-body">
-		<form asp-controller="Program" asp-action="Save" method="post" autocomplete="off" id="programForm">
+		<form asp-controller="Program" asp-action="Save" method="post" autocomplete="off" id="programForm"
+			enctype="multipart/form-data">
 
 			@Html.AntiForgeryToken()
 			@Html.HiddenFor(x => x.ProgramId)
 			@Html.HiddenFor(x => x.ProgramNo)
 			@Html.HiddenFor(x => x.Date)
+			@Html.HiddenFor(x => x.PhotoFileName)
+
 
 			@if (!ViewData.ModelState.IsValid)
 			{
@@ -113,6 +116,22 @@
 					<input asp-for="Quantity" type="number" class="form-control" placeholder="Enter Quantity" />
 					<span asp-validation-for="Quantity" class="text-danger"></span>
 				</div>
+
+				<div class="col-md-6">
+					<label class="form-label fw-semibold">Photo</label>
+					<input asp-for="Photo" type="file" accept="image/*" class="form-control" />
+					<small class="form-text text-muted g-font-size-default g-mt-0">
+						(<i><b class="text-danger">Note:</b> Maximum size allowed 1 MB & File must be in .png, .jpg, .jpeg format only.</i>)
+					</small>
+					<span asp-validation-for="Photo" class="text-danger"></span>
+				</div>
+
+				@if (!string.IsNullOrEmpty(Model?.PhotoFileName))
+				{
+					<div class="mt-2">
+						<img src="~/uploads/programs/@Model.PhotoFileName" style="max-height:120px;" class="img-thumbnail" />
+					</div>
+				}
 
 			</div>
 

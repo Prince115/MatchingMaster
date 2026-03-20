@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Domain.ViewModels
@@ -27,6 +28,12 @@ namespace Inventory.Domain.ViewModels
         public int? Round { get; set; }
 
         [ValidateNever]
+        public IFormFile? Photo { get; set; }
+
+        [ValidateNever]
+        public string ? PhotoFileName { get; set; }
+
+        [ValidateNever]
         public List<int> SelectedMatchingNo { get; set; } = new();
 
         [ValidateNever]
@@ -36,7 +43,7 @@ namespace Inventory.Domain.ViewModels
         public string? PartyName { get; set; }  // ✅ nullable — display only
 
         [ValidateNever]
-        public string? DesignNo { get; set; }
+        public int? DesignNo { get; set; }
 
         [ValidateNever]
         public int TotalMatchings { get; set; }

@@ -1,10 +1,12 @@
-﻿using Inventory.Infrastructure;
+﻿using Inventory.Domain.Entities;
+using Inventory.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Domain.Entities;
 
 namespace Inventory.Web.Controllers
 {
+    [Authorize]
     public class PartyController : Controller
     {
         #region DI
