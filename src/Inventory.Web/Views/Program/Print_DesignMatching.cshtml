@@ -10,10 +10,10 @@
 	ViewBag.FontSize = "12pt";
 	ViewData["Title"] = "Program - " + Model.ProgramNo;
 
-	List<ProgramMatchingVM> vProgramMatching = ViewBag.MatchingList;
+    var vProgramMatching = ViewBag.MatchingList as List<ProgramMatchingVM> ?? new List<ProgramMatchingVM>();
 
-	var vMatchingNoList = vProgramMatching.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
-	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
+    var vMatchingNoList = vProgramMatching.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
+    var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
 }
 
 @section styles {
@@ -21,10 +21,24 @@
 		.text-theme {
 			color: #c0544b !important
 		}
+
+		/* Hide controls when printing */
+		@@media print {
+			.no-print { display: none !important; }
+		}
 	</style>
 }
 
-<div class="row">
+<div class="d-flex justify-content-end mb-2 no-print">
+    <button id="btnPrint" type="button" class="btn btn-sm btn-primary me-2">
+        <i class="bi bi-printer"></i> Print
+    </button>
+    <button id="btnDownload" type="button" class="btn btn-sm btn-secondary">
+        <i class="bi bi-download"></i> Download PDF
+    </button>
+</div>
+
+<div id="printContainer" class="row">
 	<div class="col-12">
 		<table class="table table-borderless align-middle text-center" style="width: 100%;">
 			<tr>
@@ -101,10 +115,10 @@
 						<tr>
 							<td class="text-theme">@item.PlateName</td>
 							<td class="text-theme text-center">@i</td>
-							@foreach (var vMatchingNo in vMatchingNoList)
-							{
-								<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault().Colour</td>
-							}
+			@foreach (var vMatchingNo in vMatchingNoList)
+			{
+				<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
+			}
 						</tr>
 					}
 				</tbody>
@@ -114,12 +128,43 @@
 
 
 	@section scripts {
+		<!-- html2pdf bundle -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 		<script>
-			window.onload = function () {
-				window.print();
-				 window.onafterprint = function () {
-					window.close();
-				 };
-			};
+			(function () {
+				var btn = document.getElementById('btnPrint');
+				var downloadBtn = document.getElementById('btnDownload');
+				var element = document.getElementById('printContainer');
+				var filename = '@($"DesignMatching-{Model.ProgramNo}.pdf")';
+				var pageMargin = '@ViewBag.PageMargin';
+				var pageSize = '@ViewBag.PageSize';
+				var pageOrientation = '@ViewBag.PageOrientation';
+
+				if (btn) {
+					btn.addEventListener('click', function () {
+						window.print();
+					});
+				}
+
+				if (downloadBtn) {
+					downloadBtn.addEventListener('click', function () {
+						if (!window.html2pdf) {
+							alert('PDF export library is not loaded.');
+							return;
+						}
+
+						var marginVal = parseFloat(pageMargin) || 8;
+						var opt = {
+							margin: marginVal,
+							filename: filename,
+							image: { type: 'jpeg', quality: 0.98 },
+							html2canvas: { scale: 2, useCORS: true },
+							jsPDF: { unit: 'mm', format: pageSize && pageSize.toLowerCase() === 'a4' ? 'a4' : 'a4', orientation: pageOrientation || 'landscape' }
+						};
+
+						html2pdf().set(opt).from(element).save();
+					});
+				}
+			})();
 		</script>
 	}
