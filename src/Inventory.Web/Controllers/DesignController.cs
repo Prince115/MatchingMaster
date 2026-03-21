@@ -21,7 +21,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Index
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
         {
             var query = _db.Designs.Select(x => new MatchingVM
             {
@@ -38,7 +38,7 @@ namespace Inventory.Web.Controllers
             var total = await query.CountAsync();
 
             var items = await query
-            .OrderByDescending(x => x.Date)
+            .OrderByDescending(x => x.DesignNo)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

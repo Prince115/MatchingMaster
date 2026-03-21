@@ -23,7 +23,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Index
-        public async Task<IActionResult> Index(int? PartyId, int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int? PartyId, int page = 1, int pageSize = 20)
         {
             var query = _db.Program.Select(x => new ProgramVM
             {
@@ -163,9 +163,9 @@ namespace Inventory.Web.Controllers
                     return View("AddEdit", model);
                 }
 
-                if (model.Photo.Length > 1 * 1024 * 1024)
+                if (model.Photo.Length > 3 * 1024 * 1024)
                 {
-                    ModelState.AddModelError("Photo", "File size must be under 1MB.");
+                    ModelState.AddModelError("Photo", "File size must be under 3MB.");
                     return View("AddEdit", model);
                 }
 
