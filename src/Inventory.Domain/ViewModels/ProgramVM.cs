@@ -40,7 +40,7 @@ namespace Inventory.Domain.ViewModels
         public List<ProgramMatchingVM> Matchings { get; set; } = new();
 
         [ValidateNever]
-        public string? PartyName { get; set; }  // ✅ nullable — display only
+        public string? PartyName { get; set; }
 
         [ValidateNever]
         public int? DesignNo { get; set; }

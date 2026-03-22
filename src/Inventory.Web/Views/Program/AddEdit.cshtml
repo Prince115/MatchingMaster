@@ -4,8 +4,7 @@
 	ViewData["Title"] = ViewBag.Action + " Program";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	bool isEdit = Model.ProgramId > 0;
-	var DesignList = new SelectList(ViewBag.DesignList, "DesignId", "DesignNo", Model.DesignId);
-
+	// var DesignList = new SelectList(ViewBag.DesignList, "DesignId", "DesignNo", Model.DesignId);
 }
 
 <div class="card shadow-sm">
@@ -45,7 +44,7 @@
 
 				<div class="col-md-3">
 					<label class="form-label fw-semibold">Design <span class="text-danger">*</span></label>
-					<select asp-for="DesignId" asp-items="DesignList"
+					<select asp-for="DesignId" asp-items="ViewBag.DesignList"
 							class="form-select" id="DesignId">
 						<option value="">-- Select Design --</option>
 					</select>
@@ -121,7 +120,7 @@
 					<label class="form-label fw-semibold">Photo</label>
 					<input asp-for="Photo" type="file" accept="image/*" class="form-control" />
 					<small class="form-text text-muted g-font-size-default g-mt-0">
-						(<i><b class="text-danger">Note:</b> Maximum size allowed 1 MB & File must be in .png, .jpg, .jpeg format only.</i>)
+						(<i><b class="text-danger">Note:</b> Maximum size allowed 3 MB & File must be in .png, .jpg, .jpeg format only.</i>)
 					</small>
 					<span asp-validation-for="Photo" class="text-danger"></span>
 				</div>

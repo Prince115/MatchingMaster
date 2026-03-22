@@ -75,7 +75,8 @@ namespace Inventory.Web.Controllers
         {
             ViewBag.Action = "Add";
             ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName");
-            ViewBag.DesignList = _db.Designs.OrderBy(o=>o.DesignNo);
+            ViewBag.DesignList = new SelectList(_db.Designs.OrderBy(o => o.DesignNo), "DesignId", "DesignNo");
+
 
             var vPreviousProgram = await _db.Program.OrderByDescending(x => x.ProgramId).FirstOrDefaultAsync();
             int vNextProgramNo = 1;
@@ -118,7 +119,7 @@ namespace Inventory.Web.Controllers
                 };
 
                 ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
-                //ViewBag.DesignList = new SelectList(_db.Designs, "DesignId", "DesignNo", program.DesignId);
+                ViewBag.DesignList = new SelectList(_db.Designs.OrderBy(o => o.DesignNo), "DesignId", "DesignNo", program.DesignId);
 
                 if (item == null)
                     return NotFound();
@@ -159,13 +160,13 @@ namespace Inventory.Web.Controllers
 
                 if (!allowedExtensions.Contains(extension))
                 {
-                    ModelState.AddModelError("Photo", "Only jpg, jpeg, png files allowed.");
+                    ModelState.AddModelError(nameof(model.Photo), "Only jpg, jpeg, png files allowed.");
                     return View("AddEdit", model);
                 }
 
                 if (model.Photo.Length > 3 * 1024 * 1024)
                 {
-                    ModelState.AddModelError("Photo", "File size must be under 3MB.");
+                    ModelState.AddModelError(nameof(model.Photo), "File size must be under 3MB.");
                     return View("AddEdit", model);
                 }
 
