@@ -21,7 +21,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Index
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
+        public async Task<IActionResult> Index(int? designNo,int page = 1, int pageSize = 20)
         {
             var query = _db.Designs.Select(x => new MatchingVM
             {
@@ -35,6 +35,11 @@ namespace Inventory.Web.Controllers
                         .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Count(),
             });
 
+            if(designNo != null)
+            {
+                query = query.Where(x => x.DesignNo == designNo);
+            }
+
             var total = await query.CountAsync();
 
             var items = await query
@@ -46,6 +51,7 @@ namespace Inventory.Web.Controllers
             var model = new PaginatedList<MatchingVM>(items, total, page, pageSize);
 
             ViewBag.PageSize = pageSize;
+            ViewBag.DesignNo = designNo;
 
             return View(model);
         }
