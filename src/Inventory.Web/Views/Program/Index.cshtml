@@ -53,12 +53,12 @@
 						<th>Program No.</th>
 						<th>Party</th>
 						<th>Design</th>
-						<th>Matching</th>
+						<th>Total Matchings</th>
 						<th>Date</th>
 						<th class="text-center" width="180">Action</th>
 					</tr>
 				</thead>
-
+					
 				<tbody>
 
 					@if (Model.Items.Any())
@@ -68,7 +68,7 @@
 							<tr>
 								<td>@item.ProgramNo</td>
 								<td>@item.PartyName</td>
-								<td>@item.DesignIDCSV</td>
+								<td>@item.DesignNoCSV</td>
 								<td>@item.TotalMatchings</td>
 								<td>@item.Date.ToString("dd-MM-yyyy")</td>
 

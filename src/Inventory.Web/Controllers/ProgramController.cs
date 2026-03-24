@@ -31,7 +31,7 @@ namespace Inventory.Web.Controllers
                 ProgramNo = x.ProgramNo,
                 PartyId = x.PartyId,
                 PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
-                DesignNoCSV = string.Join(", ",x.ProgramMatchings.Select(x=>x.DesignId).Distinct()),
+                DesignNoCSV = string.Join(", ",_db.Designs.Where(d => x.ProgramMatchings.Select(pm => pm.DesignId).Distinct().Contains(d.DesignId)).Select(d => d.DesignNo)),
                 TotalMatchings = _db.ProgramMatchings.Where(m => m.ProgramId == x.ProgramId).GroupBy(x => x.MatchingNo).Count(),
                 Quality = x.Quality,
                 Date = x.Date,
@@ -112,7 +112,7 @@ namespace Inventory.Web.Controllers
                     Round = program.Round,
                     Rate = program.Rate,
                     PhotoFileName = program.PhotoFileName,
-                    SelectedDesignIds = program.ProgramMatchings.Select(x=>x.DesignId).Distinct().ToList(),
+                    SelectedDesignIds = program.ProgramMatchings.Select(x => x.DesignId).Distinct().ToList(),
                     SelectedMatchings = program.ProgramMatchings.Select(x => $"{x.DesignId}|{x.MatchingNo}").Distinct().ToList()
                 };
 
@@ -339,7 +339,8 @@ namespace Inventory.Web.Controllers
                     DesignMatchingId = m.DesignMatchingId,
                     PlateId = m.PlateId,
                     PlateName = _db.DesignPlates.Where(p => p.DesignPlateId == m.PlateId).Select(p => p.PlateName).FirstOrDefault(),
-                    DesignId = m.DesignId
+                    DesignId = m.DesignId,
+                    DesignNo = _db.Designs.Where(d => d.DesignId == m.DesignId).Select(d => d.DesignNo).FirstOrDefault()
                 }).ToListAsync();
 
 
@@ -351,18 +352,6 @@ namespace Inventory.Web.Controllers
             {
                 return View("Print_Program", vModel);
             }
-        }
-        #endregion
-
-
-        #region GetMatchingByDesign
-        [HttpGet]
-        public async Task<IActionResult> GetMatchingByDesign(int designId)
-        {
-            var data = _db.DesignPlates.Where(x => x.DesignId == designId)
-                    .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
-
-            return Json(data);
         }
         #endregion
 
@@ -384,7 +373,7 @@ namespace Inventory.Web.Controllers
                     DesignNo = x.DesignPlate.Design.DesignNo,
                     MatchingNo = x.MatchingNo
                 })
-                .Distinct() // 🔥 removes duplicate M1 from multiple plates
+                .Distinct()
                 .OrderBy(x => x.DesignNo)
                 .ThenBy(x => x.MatchingNo)
                 .ToListAsync();
