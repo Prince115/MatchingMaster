@@ -13,10 +13,6 @@ namespace Inventory.Domain.ViewModels
 
         [Required(ErrorMessage = "Please select party.")]
         public int PartyId { get; set; }
-
-        [Required(ErrorMessage = "Please select design.")]
-        public int DesignId { get; set; }
-
         public string? Quality { get; set; }
         public string? Fold { get; set; }
         public string? Finishing { get; set; }
@@ -28,13 +24,22 @@ namespace Inventory.Domain.ViewModels
         public int? Round { get; set; }
 
         [ValidateNever]
+        public string DesignNoCSV {get; set;} 
+
+        [ValidateNever]
+        public string DesignIDCSV { get; set; }
+
+        [ValidateNever]
         public IFormFile? Photo { get; set; }
 
         [ValidateNever]
         public string ? PhotoFileName { get; set; }
 
-        [ValidateNever]
-        public List<int> SelectedMatchingNo { get; set; } = new();
+        [Required]
+        public List<string> SelectedMatchings { get; set; } = new();
+
+        [Required]
+        public List<int> SelectedDesignIds { get; set; } = new();
 
         [ValidateNever]
         public List<ProgramMatchingVM> Matchings { get; set; } = new();

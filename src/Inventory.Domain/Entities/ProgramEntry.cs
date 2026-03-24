@@ -22,13 +22,11 @@ namespace Inventory.Domain.Entities
         public string? Remarks { get; set; }
         public int? Round { get; set; }
         public string? Rate { get; set; }
-        public int DesignId { get; set; }
         public string? PhotoFileName { get; set; }
 
 
         [MinLength(1, ErrorMessage = "At least one Program Matching is required")]
         public ICollection<ProgramMatching> ProgramMatchings { get; set; } = new List<ProgramMatching>();
         public Party Party { get; set; } = null!;   // FK → Party
-        public Design Design { get; set; } = null!;   // FK → Design
     }
 }

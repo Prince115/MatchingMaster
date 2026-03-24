@@ -19,7 +19,7 @@
 
 	<div class="card-body">
 		<form asp-controller="Program" asp-action="Save" method="post" autocomplete="off" id="programForm"
-			enctype="multipart/form-data">
+			  enctype="multipart/form-data">
 
 			@Html.AntiForgeryToken()
 			@Html.HiddenFor(x => x.ProgramId)
@@ -34,7 +34,8 @@
 			}
 
 			<div class="row mb-3">
-				<div class="col-md-3">
+
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Party <span class="text-danger">*</span></label>
 					<select asp-for="PartyId" asp-items="ViewBag.PartyList" class="form-select">
 						<option value="">-- Select Party --</option>
@@ -42,75 +43,72 @@
 					<span asp-validation-for="PartyId" class="text-danger"></span>
 				</div>
 
-				<div class="col-md-3">
-					<label class="form-label fw-semibold">Design <span class="text-danger">*</span></label>
-					<select asp-for="DesignId" asp-items="ViewBag.DesignList"
-							class="form-select" id="DesignId">
-						<option value="">-- Select Design --</option>
+				<div class="col-md-4">
+					<label class="form-label fw-semibold">Designs <span class="text-danger">*</span></label>
+					<select id="designSelect" name="SelectedDesignIds" class="form-select" multiple>
+						@foreach (var item in ViewBag.DesignList)
+						{
+							var isSelected = Model.SelectedDesignIds != null
+											 && Model.SelectedDesignIds.Contains(int.Parse(item.Value));
+
+							<option value="@item.Value" selected="@(isSelected)">
+								@item.Text
+							</option>
+						}
 					</select>
-					<span asp-validation-for="DesignId" class="text-danger"></span>
+					<span asp-validation-for="SelectedDesignIds" class="text-danger"></span>
 				</div>
 
-				<div class="col-md-3">
-					<label class="form-label fw-semibold">Matching <span class="text-danger">*</span></label>
-
-					<div class="dropdown w-100">
-						<button class="btn btn-outline-secondary w-100 text-start dropdown-toggle"
-								type="button"
-								data-bs-toggle="dropdown"
-								aria-expanded="false"
-								id="matchingDropdownBtn">
-							Select Matching
-						</button>
-						<div class="dropdown-menu p-2"
-							 id="MatchingList"
-							 style="width:300px !important; max-height:220px; overflow-y:auto;">
-						</div>
-					</div>
-					<span asp-validation-for="SelectedMatchingNo" class="text-danger"></span>
-				</div>
-
-				<div class="col-md-3">
-					<label class="form-label fw-semibold">Quality</label>
-					<input asp-for="Quality" type="text" class="form-control" placeholder="Enter Quality" />
-					<span asp-validation-for="Quality" class="text-danger"></span>
+				<div class="col-md-4">
+					<label class="form-label fw-semibold">Matchings <span class="text-danger">*</span></label>
+					<select id="matchingSelect" name="SelectedMatchings" class="form-select" multiple>
+					</select>
+					<span asp-validation-for="SelectedMatchings" class="text-danger"></span>
 				</div>
 			</div>
 
 			<div class="row mb-3">
-				<div class="col-md-3">
+				<div class="col-md-4">
+					<label class="form-label fw-semibold">Quality</label>
+					<input asp-for="Quality" type="text" class="form-control" placeholder="Enter Quality" />
+					<span asp-validation-for="Quality" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Main Cut</label>
 					<input asp-for="MainCut" type="number" class="form-control" placeholder="Enter Main Cut" />
 					<span asp-validation-for="MainCut" class="text-danger"></span>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Fold</label>
 					<input asp-for="Fold" type="text" class="form-control" placeholder="Enter Fold" />
 					<span asp-validation-for="Fold" class="text-danger"></span>
 				</div>
+			</div>
 
-				<div class="col-md-3">
+			<div class="row mb-3">
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Finishing</label>
 					<input asp-for="Finishing" type="text" class="form-control" placeholder="Enter Finishing" />
 					<span asp-validation-for="Finishing" class="text-danger"></span>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Round</label>
 					<input asp-for="Round" type="number" class="form-control" placeholder="Enter Round" />
 					<span asp-validation-for="Round" class="text-danger"></span>
 				</div>
-			</div>
 
-			<div class="row mb-3">
-				<div class="col-md-3">
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Rate</label>
 					<input asp-for="Rate" class="form-control" placeholder="Enter Rate" />
 					<span asp-validation-for="Rate" class="text-danger"></span>
 				</div>
+			</div>
 
-				<div class="col-md-3">
+			<div class="row mb-3">
+				<div class="col-md-4">
 					<label class="form-label fw-semibold">Quantity</label>
 					<input asp-for="Quantity" type="number" class="form-control" placeholder="Enter Quantity" />
 					<span asp-validation-for="Quantity" class="text-danger"></span>
@@ -131,7 +129,6 @@
 						<img src="~/uploads/programs/@Model.PhotoFileName" style="max-height:120px;" class="img-thumbnail" />
 					</div>
 				}
-
 			</div>
 
 			<div class="row mb-3">
@@ -160,7 +157,9 @@
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
 
-	<script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	@* <script>
 		var selectedMatchings = @Html.Raw(Json.Serialize(Model.SelectedMatchingNo ?? new List<int>()));
 
 		$(document).on("click", "#MatchingList", function (e) {
@@ -231,6 +230,28 @@
 		$(document).ready(function () {
 			const designId = $("#DesignId").val();
 			if (designId) loadMatchings(designId);
+
+				// Initialize Select2
+		$('#mySelect').select2({
+			theme        : 'bootstrap-5',
+			placeholder  : 'Select items...',
+			allowClear   : true,
+			width        : '100%'
+		});
+
+		// On form submit → join selected values with comma → store in hidden field
+		$('form').on('submit', function () {
+			const selected = $('#mySelect').val();  // returns array
+			$('#selectedItemsHidden').val(
+				selected ? selected.join(',') : ''  // ✅ comma separated
+			);
+		});
+
+		// Edit mode — pre-select existing values from hidden field
+		const existing = $('#selectedItemsHidden').val();
+		if (existing) {
+			$('#mySelect').val(existing.split(',')).trigger('change');
+		}
 		});
 
 		// $("#programForm").on("submit", function (e) {
@@ -241,5 +262,70 @@
 		// 		return false;
 		// 	}
 		// });
+	</script> *@
+
+
+	<script>
+		window.preselectedMatchings = @Html.Raw(Json.Serialize(Model.SelectedMatchings));
+		$(document).ready(function () {
+
+		$('#designSelect').select2({
+		theme: 'bootstrap-5',
+		placeholder: 'Select Designs...',
+		width: '100%'
+		});
+
+		$('#matchingSelect').select2({
+		theme: 'bootstrap-5',
+		placeholder: 'Select Matchings...',
+		width: '100%'
+		});
+
+		let preselectedMatchings = window.preselectedMatchings || [];
+
+		function loadMatchings(selectedIds, isEdit = false) {
+
+		if (!selectedIds || selectedIds.length === 0) {
+		$('#matchingSelect').empty().trigger('change');
+		return;
+		}
+
+		$.get('/Program/GetMatchingByDesignIDCSV',
+		{ DesignIDCSV: selectedIds.join(',') },
+		function (data) {
+
+		$('#matchingSelect').empty();
+
+		data.forEach(item => {
+
+		const value = item.designId + '|' + item.matchingNo;
+		const text = "D" + item.designNo + " - M" + item.matchingNo;
+
+		$('#matchingSelect').append(
+		new Option(text, value, false, false)
+		);
+		});
+
+		// ✅ EDIT MODE SELECT
+		if (isEdit && preselectedMatchings.length > 0) {
+		$('#matchingSelect').val(preselectedMatchings);
+		}
+
+		$('#matchingSelect').trigger('change');
+		});
+		}
+
+		// 🔥 On change
+		$('#designSelect').on('change', function () {
+		loadMatchings($(this).val(), false);
+		});
+
+		// 🔥 On page load (EDIT MODE)
+		const initialDesigns = $('#designSelect').val();
+
+		if (initialDesigns && initialDesigns.length > 0) {
+		loadMatchings(initialDesigns, true);
+		}
+		});
 	</script>
 }
