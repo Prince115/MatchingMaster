@@ -7,6 +7,13 @@
 	ViewData["Title"] = isEdit ? "Edit Design" : "Add Design";
 }
 
+<style>
+    .input-error {
+        border: 1px solid red !important;
+        background-color: #ffe6e6;
+    }
+</style>
+
 <div class="card">
 	<div class="card-header d-flex justify-content-between align-items-center">
 		<h5 class="mb-0">@(isEdit ? "Edit Matching" : "Add Matching")</h5>
@@ -309,6 +316,31 @@
                 tableWrap.classList.remove('d-none');
                 btnSave.disabled = false;
             }
+
+            document.querySelector('form').addEventListener('submit', function (e) {
+                let isValid = true;
+
+                document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+                document.querySelectorAll('input[name$=".PlateName"]').forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('input-error');
+                        isValid = false;
+                    }
+                });
+
+                document.querySelectorAll('input[name$=".Colour"]').forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('input-error');
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert("Please fill all Plate Name and Colour fields.");
+                }
+            });
 
             // Get input value by name inside a row
             function getVal(tr, name) {

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Domain.ViewModels
 {
     public class MatchingVM
     {
         public int DesignId { get; set; }
+
+        [Required]
         public int? DesignNo { get; set; }
         public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         public int? PartyId { get; set; }
@@ -27,7 +30,9 @@ namespace Inventory.Domain.ViewModels
     public class PlateRow
     {
         [ValidateNever]
-        public int DesignPlateId { get; set; } 
+        public int DesignPlateId { get; set; }
+
+        [Required]
         public string? PlateName { get; set; }
 
         [ValidateNever]
@@ -44,6 +49,8 @@ namespace Inventory.Domain.ViewModels
         
         [ValidateNever]
         public int MatchingNo { get; set; }
+
+        [Required]
         public string? Colour { get; set; }
     }
 }

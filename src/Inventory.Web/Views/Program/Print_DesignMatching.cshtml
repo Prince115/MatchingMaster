@@ -10,10 +10,11 @@
 	ViewBag.FontSize = "12pt";
 	ViewData["Title"] = "Program - " + Model.ProgramNo;
 
-    var vProgramMatching = ViewBag.MatchingList as List<ProgramMatchingVM> ?? new List<ProgramMatchingVM>();
+	var vProgramMatching = ViewBag.MatchingList as List<ProgramMatchingVM> ?? new List<ProgramMatchingVM>();
 
-    var vMatchingNoList = vProgramMatching.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
-    var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
+	var vMatchingNoList = vProgramMatching.GroupBy(x => new { x.DesignId, x.MatchingNo }).Select(x => x.First()).ToList();
+	var vDesignList = vProgramMatching.GroupBy(x => x.DesignId).Select(x => x.First()).ToList();
+	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
 }
 
 @section styles {
@@ -24,108 +25,113 @@
 
 		/* Hide controls when printing */
 		@@media print {
-			.no-print { display: none !important; }
+			.no-print {
+				display: none !important;
+			}
 		}
 	</style>
 }
 
 <div class="d-flex justify-content-end mb-2 no-print">
-    <button id="btnPrint" type="button" class="btn btn-sm btn-primary me-2">
-        <i class="bi bi-printer"></i> Print
-    </button>
-    <button id="btnDownload" type="button" class="btn btn-sm btn-secondary">
-        <i class="bi bi-download"></i> Download PDF
-    </button>
+	<button id="btnPrint" type="button" class="btn btn-sm btn-primary me-2">
+		<i class="bi bi-printer"></i> Print
+	</button>
+	<button id="btnDownload" type="button" class="btn btn-sm btn-secondary">
+		<i class="bi bi-download"></i> Download PDF
+	</button>
 </div>
 
 <div id="printContainer" class="row">
-	<div class="col-12">
-		<table class="table table-borderless align-middle text-center" style="width: 100%;">
-			<tr>
+	@foreach (var vDesign in vDesignList)
+	{
+		<div class="col-12">
+			<table class="table table-borderless align-middle text-center" style="width: 100%;">
+				<tr>
 
-				<!-- Left -->
-				<td class="text-start text-theme" width="25%">
-					<small class="d-block">॥ શ્રી હિંગલાજ માતાજી ॥</small>
-					<div class="fw-semibold">
-						Maulikbhai <br>
-						Mo. 94095 30045
-					</div>
-				</td>
-
-				<!-- Center -->
-				<td class="text-theme" width="50%">
-					<small class="d-block">॥ શ્રી ગણેશાય નમઃ ॥</small>
-
-					<!-- Logo -->
-					<img src="~/assets/Images/logo.png" alt="Logo" class="img-fluid" style="max-height:70px;">
-					</td>
-
-					<!-- Right -->
-					<td class="text-end text-theme" width="25%">
-						<small class="d-block">॥ શ્રી સ્વામિનારાયણ ॥</small>
+					<!-- Left -->
+					<td class="text-start text-theme" width="25%">
+						<small class="d-block">॥ શ્રી હિંગલાજ માતાજી ॥</small>
 						<div class="fw-semibold">
-							Jasminbhai <br>
-							Mo. 73830 86867
+							Maulikbhai <br>
+							Mo. 94095 30045
 						</div>
 					</td>
 
-				</tr>
-			</table>
-	</div>
-		<div class="col-12">
-			<table style="width:100%; border-collapse:collapse;">
-				<tr>
-					<td class="text-theme" style="width:25%; padding:6px 0;">
-						<strong>ક્વોલિટી</strong> : @Model.Quality
-					</td>
-					<td class="text-theme" style="width:25%; padding:6px 0;">
-						<strong>ડિ. નં.</strong> : @Model.DesignNo
-					</td>
-					<td class="text-theme" style="width:30%; padding:6px 0;">
-						<strong>પાર્ટી</strong> : @Model.PartyName
-					</td>
-					<td class="text-theme" style="width:20%; padding:6px 0; text-align:right;">
-						<strong>તારીખ</strong> : @Model.Date.ToString("dd MMM yyyy")
-					</td>
-				</tr>
-			</table>
+					<!-- Center -->
+					<td class="text-theme" width="50%">
+						<small class="d-block">॥ શ્રી ગણેશાય નમઃ ॥</small>
 
-		</div>
-		<hr style="border:none; border-top:1px solid #000;" />
+						<!-- Logo -->
+						<img src="~/assets/Images/logo.png" alt="Logo" class="img-fluid" style="max-height:70px;">
+						</td>
 
-		<div class="col-12">
-			<table class="table table-bordered text-theme">
-				<thead>
-					<tr class="">
-						<th class="text-theme">Plate Name</th>
-						<th class="text-theme text-center"></th>
-						@foreach (var vMatchingNo in vMatchingNoList)
-						{
-							<th class="text-theme">M-@vMatchingNo.MatchingNo</th>
-						}
+						<!-- Right -->
+						<td class="text-end text-theme" width="25%">
+							<small class="d-block">॥ શ્રી સ્વામિનારાયણ ॥</small>
+							<div class="fw-semibold">
+								Jasminbhai <br>
+								Mo. 73830 86867
+							</div>
+						</td>
+
 					</tr>
-				</thead>
-				<tbody>
-					@{
-						int i = 0;
-					}
-					@foreach (var item in vPlateList)
-					{
-						i++;
-						<tr>
-							<td class="text-theme">@item.PlateName</td>
-							<td class="text-theme text-center">@i</td>
-							@foreach (var vMatchingNo in vMatchingNoList)
+				</table>
+			</div>
+			<div class="col-12">
+				<table style="width:100%; border-collapse:collapse;">
+					<tr>
+						<td class="text-theme" style="width:25%; padding:6px 0;">
+							<strong>ક્વોલિટી</strong> : @Model.Quality
+						</td>
+						<td class="text-theme" style="width:25%; padding:6px 0;">
+							<strong>ડિ. નં.</strong> : @vDesign.DesignNo
+						</td>
+						<td class="text-theme" style="width:30%; padding:6px 0;">
+							<strong>પાર્ટી</strong> : @Model.PartyName
+						</td>
+						<td class="text-theme" style="width:20%; padding:6px 0; text-align:right;">
+							<strong>તારીખ</strong> : @Model.Date.ToString("dd MMM yyyy")
+						</td>
+					</tr>
+				</table>
+			</div>
+			<hr style="border:none; border-top:1px solid #000;" />
+
+			<div class="col-12">
+				<table class="table table-bordered text-theme">
+					<thead>
+						<tr class="">
+							<th class="text-theme">Plate Name</th>
+							<th class="text-theme text-center"></th>
+							@foreach (var vMatchingNo in vMatchingNoList.Where(x => x.DesignId == vDesign.DesignId))
 							{
-								<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
+								<th class="text-theme">M-@vMatchingNo.MatchingNo</th>
 							}
 						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+					<tbody>
+						@{
+							int i = 0;
+						}
+						@foreach (var item in vPlateList)
+						{
+							i++;
+							<tr>
+								<td class="text-theme">@item.PlateName</td>
+								<td class="text-theme text-center">@i</td>
+								@foreach (var vMatchingNo in vMatchingNoList.Where(x => x.DesignId == vDesign.DesignId))
+								{
+									<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
+								}
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		
+			<div style="page-break-after: always !important;"></div>
+		}
 	</div>
-
 
 	@section scripts {
 		<!-- html2pdf bundle -->
@@ -140,31 +146,31 @@
 				var pageSize = '@ViewBag.PageSize';
 				var pageOrientation = '@ViewBag.PageOrientation';
 
-				if (btn) {
+			if (btn) {
 					btn.addEventListener('click', function () {
-						window.print();
-					});
-				}
+					window.print();
+				});
+			}
 
-				if (downloadBtn) {
-					downloadBtn.addEventListener('click', function () {
-						if (!window.html2pdf) {
-							alert('PDF export library is not loaded.');
-							return;
-						}
+			if (downloadBtn) {
+				downloadBtn.addEventListener('click', function () {
+				if (!window.html2pdf) {
+					alert('PDF export library is not loaded.');
+				return;
+			}
 
-						var marginVal = parseFloat(pageMargin) || 8;
-						var opt = {
-							margin: marginVal,
-							filename: filename,
-							image: { type: 'jpeg', quality: 0.98 },
-							html2canvas: { scale: 2, useCORS: true },
-							jsPDF: { unit: 'mm', format: pageSize && pageSize.toLowerCase() === 'a4' ? 'a4' : 'a4', orientation: pageOrientation || 'landscape' }
-						};
+			var marginVal = parseFloat(pageMargin) || 8;
+			var opt = {
+				margin: marginVal,
+				filename: filename,
+				image: { type: 'jpeg', quality: 0.98 },
+				html2canvas: { scale: 2, useCORS: true },
+				jsPDF: { unit: 'mm', format: pageSize && pageSize.toLowerCase() === 'a4' ? 'a4' : 'a4', orientation: pageOrientation || 'landscape' }
+			};
 
-						html2pdf().set(opt).from(element).save();
-					});
-				}
+				html2pdf().set(opt).from(element).save();
+			});
+			}
 			})();
 		</script>
 	}
