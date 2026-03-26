@@ -177,6 +177,7 @@
                                                 {
                                                     var matchings = vMatchingNoList
                                                         .Where(x => x.DesignId == vDesign.DesignId)
+                                                        .OrderBy(o => o.MatchingNo)
                                                         .Select(m => "M-" + m.MatchingNo)
                                                         .ToList();
                                                     <tr>

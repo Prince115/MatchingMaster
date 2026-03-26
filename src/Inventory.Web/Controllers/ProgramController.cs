@@ -25,44 +25,90 @@ namespace Inventory.Web.Controllers
         #region Index
         public async Task<IActionResult> Index(int? PartyId, int page = 1, int pageSize = 20)
         {
-            var query = _db.Program.Select(x => new ProgramVM
-            {
-                ProgramId = x.ProgramId,
-                ProgramNo = x.ProgramNo,
-                PartyId = x.PartyId,
-                PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
-                DesignNoCSV = string.Join(", ",_db.Designs.Where(d => x.ProgramMatchings.Select(pm => pm.DesignId).Distinct().Contains(d.DesignId)).Select(d => d.DesignNo)),
-                TotalMatchings = _db.ProgramMatchings.Where(m => m.ProgramId == x.ProgramId).GroupBy(x => x.MatchingNo).Count(),
-                Quality = x.Quality,
-                Date = x.Date,
-                MainCut = x.MainCut,
-                Fold = x.Fold,
-                Finishing = x.Finishing,
-                Quantity = x.Quantity,
-                Remarks = x.Remarks,
-                Round = x.Round,
-                Rate = x.Rate,
-            });
-
+            // Base query (no projection) to allow efficient count and paging
+            var baseQuery = _db.Program.AsNoTracking();
             if (PartyId != null)
+                baseQuery = baseQuery.Where(x => x.PartyId == PartyId);
+
+            var total = await baseQuery.CountAsync();
+
+            // Fetch a page of programs (lightweight projection)
+            var programs = await baseQuery
+                .OrderByDescending(x => x.ProgramId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => new
+                {
+                    x.ProgramId,
+                    x.ProgramNo,
+                    x.PartyId,
+                    x.Quality,
+                    x.Date,
+                    x.MainCut,
+                    x.Fold,
+                    x.Finishing,
+                    x.Quantity,
+                    x.Remarks,
+                    x.Round,
+                    x.Rate
+                })
+                .ToListAsync();
+
+            var programIds = programs.Select(p => p.ProgramId).ToList();
+
+            // Load related data in a few targeted queries to avoid per-row subqueries
+            var partyIds = programs.Select(p => p.PartyId).Distinct().ToList();
+            var party = _db.Party.AsNoTracking();
+            var parties = await party
+                .Where(p => partyIds.Contains(p.PartyId))
+                .ToDictionaryAsync(p => p.PartyId, p => p.PartyName);
+
+            var programMatchings = await _db.ProgramMatchings.AsNoTracking()
+                .Where(pm => programIds.Contains(pm.ProgramId))
+                .ToListAsync();
+
+            var totalMatchingsMap = programMatchings
+                .GroupBy(pm => pm.ProgramId)
+                .ToDictionary(g => g.Key, g => g.Select(pm => pm.MatchingNo).Distinct().Count());
+
+            var designIdsPerProgram = programMatchings
+                .GroupBy(pm => pm.ProgramId)
+                .ToDictionary(g => g.Key, g => g.Select(pm => pm.DesignId).Distinct().ToList());
+
+            var allDesignIds = designIdsPerProgram.Values.SelectMany(x => x).Distinct().ToList();
+            var designs = new Dictionary<int, int>();
+            if (allDesignIds.Any())
             {
-                query = query.Where(x => x.PartyId == PartyId);
+                designs = await _db.Designs.AsNoTracking()
+                    .Where(d => allDesignIds.Contains(d.DesignId))
+                    .ToDictionaryAsync(d => d.DesignId, d => d.DesignNo ?? 0);
             }
 
-            var total = await query.CountAsync();
-
-            var items = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+            var items = programs.Select(p => new ProgramVM
+            {
+                ProgramId = p.ProgramId,
+                ProgramNo = p.ProgramNo,
+                PartyId = p.PartyId,
+                PartyName = parties.TryGetValue(p.PartyId, out var pn) ? pn : string.Empty,
+                DesignNoCSV = designIdsPerProgram.TryGetValue(p.ProgramId, out var dids) ? string.Join(", ", dids.Select(id => designs.TryGetValue(id, out var dn) ? dn.ToString() : id.ToString())) : string.Empty,
+                TotalMatchings = totalMatchingsMap.TryGetValue(p.ProgramId, out var tm) ? tm : 0,
+                Quality = p.Quality,
+                Date = p.Date,
+                MainCut = p.MainCut,
+                Fold = p.Fold,
+                Finishing = p.Finishing,
+                Quantity = p.Quantity,
+                Remarks = p.Remarks,
+                Round = p.Round,
+                Rate = p.Rate,
+            }).ToList();
 
             var model = new PaginatedList<ProgramVM>(items, total, page, pageSize);
 
             ViewBag.PageSize = pageSize;
-
-            ViewBag.PartyList = new SelectList(
-                   _db.Party, "PartyId", "PartyName", PartyId
-                );
+            // Load party list once (no tracking)
+            var partyList = await party.OrderBy(p => p.PartyName).ToListAsync();
+            ViewBag.PartyList = new SelectList(partyList, "PartyId", "PartyName", PartyId);
 
             return View(model);
         }
@@ -73,10 +119,13 @@ namespace Inventory.Web.Controllers
         public async Task<IActionResult> AddEdit(int? id)
         {
             ViewBag.Action = "Add";
-            ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName");
-            ViewBag.DesignList = new SelectList(_db.Designs.OrderBy(o => o.DesignNo), "DesignId", "DesignNo");
+            // Load lookup lists with no tracking (read-only)
+            var partyList = await _db.Party.AsNoTracking().OrderBy(p => p.PartyName).ToListAsync();
+            ViewBag.PartyList = new SelectList(partyList, "PartyId", "PartyName");
+            var designList = await _db.Designs.AsNoTracking().OrderBy(o => o.DesignNo).ToListAsync();
+            ViewBag.DesignList = new SelectList(designList, "DesignId", "DesignNo");
 
-            var vPreviousProgram = await _db.Program.OrderByDescending(x => x.ProgramId).FirstOrDefaultAsync();
+            var vPreviousProgram = await _db.Program.AsNoTracking().OrderByDescending(x => x.ProgramId).FirstOrDefaultAsync();
             int vNextProgramNo = 1;
 
             if (vPreviousProgram != null)
@@ -95,7 +144,7 @@ namespace Inventory.Web.Controllers
             {
                 ViewBag.Action = "Edit";
 
-                var program = await _db.Program.Include(x => x.ProgramMatchings).FirstOrDefaultAsync(x => x.ProgramId == id);
+                var program = await _db.Program.AsNoTracking().Include(x => x.ProgramMatchings).FirstOrDefaultAsync(x => x.ProgramId == id);
 
                 var item = new ProgramVM
                 {
@@ -116,8 +165,9 @@ namespace Inventory.Web.Controllers
                     SelectedMatchings = program.ProgramMatchings.Select(x => $"{x.DesignId}|{x.MatchingNo}").Distinct().ToList()
                 };
 
-                ViewBag.PartyList = new SelectList(_db.Party, "PartyId", "PartyName", program.PartyId);
-                ViewBag.DesignList = new SelectList(_db.Designs.OrderBy(o => o.DesignNo), "DesignId", "DesignNo");
+                // Reuse the already loaded lists and set selected values
+                ViewBag.PartyList = new SelectList(partyList, "PartyId", "PartyName", program.PartyId);
+                ViewBag.DesignList = new SelectList(designList, "DesignId", "DesignNo");
 
                 if (item == null)
                     return NotFound();
@@ -196,6 +246,7 @@ namespace Inventory.Web.Controllers
             var vDesignIds = vMatchingList.Select(x => x.DesignId).Distinct().ToList();
 
             var vDBMatchings = await _db.DesignMatchings
+                .AsNoTracking()
                 .Include(x => x.DesignPlate)
                 .Where(x => vDesignIds.Contains(x.DesignPlate.DesignId))
                 .ToListAsync();
@@ -312,13 +363,15 @@ namespace Inventory.Web.Controllers
         #region Print
         public async Task<IActionResult> Print(int ProgramId, string PrintView)
         {
-            var vModel = await _db.Program.Where(x => x.ProgramId == ProgramId)
+            // Load program header using no-tracking
+            var vModel = await _db.Program.AsNoTracking()
+                .Where(x => x.ProgramId == ProgramId)
                 .Select(x => new ProgramVM
                 {
                     ProgramId = x.ProgramId,
                     ProgramNo = x.ProgramNo,
                     PartyName = _db.Party.Where(p => p.PartyId == x.PartyId).Select(p => p.PartyName).FirstOrDefault(),
-                    DesignNo = /*_db.Designs.Where(d => d.DesignId == x.DesignId).Select(d => d.DesignNo).FirstOrDefault()*/ 0,
+                    DesignNo = 0,
                     Quality = x.Quality,
                     Date = x.Date,
                     MainCut = x.MainCut,
@@ -331,17 +384,27 @@ namespace Inventory.Web.Controllers
                     PhotoFileName = x.PhotoFileName
                 }).FirstOrDefaultAsync();
 
-            ViewBag.MatchingList = await _db.ProgramMatchings.Where(m => m.ProgramId == ProgramId)
-                .Select(m => new ProgramMatchingVM
-                {
-                    MatchingNo = m.MatchingNo,
-                    Colour = m.Colour,
-                    DesignMatchingId = m.DesignMatchingId,
-                    PlateId = m.PlateId,
-                    PlateName = _db.DesignPlates.Where(p => p.DesignPlateId == m.PlateId).Select(p => p.PlateName).FirstOrDefault(),
-                    DesignId = m.DesignId,
-                    DesignNo = _db.Designs.Where(d => d.DesignId == m.DesignId).Select(d => d.DesignNo).FirstOrDefault()
-                }).ToListAsync();
+            // Load matching list with no-tracking and batch lookups for plate and design names
+            var matchings = await _db.ProgramMatchings.AsNoTracking()
+                .Where(m => m.ProgramId == ProgramId)
+                .ToListAsync();
+
+            var plateIds = matchings.Select(m => m.PlateId).Distinct().ToList();
+            var designIds = matchings.Select(m => m.DesignId).Distinct().ToList();
+
+            var plateMap = await _db.DesignPlates.AsNoTracking().Where(p => plateIds.Contains(p.DesignPlateId)).ToDictionaryAsync(p => p.DesignPlateId, p => p.PlateName);
+            var designMap = await _db.Designs.AsNoTracking().Where(d => designIds.Contains(d.DesignId)).ToDictionaryAsync(d => d.DesignId, d => d.DesignNo);
+
+            ViewBag.MatchingList = matchings.Select(m => new ProgramMatchingVM
+            {
+                MatchingNo = m.MatchingNo,
+                Colour = m.Colour,
+                DesignMatchingId = m.DesignMatchingId,
+                PlateId = m.PlateId,
+                PlateName = plateMap.TryGetValue(m.PlateId, out var pn) ? pn : string.Empty,
+                DesignId = m.DesignId,
+                DesignNo = designMap.TryGetValue(m.DesignId, out var dn) ? dn : 0
+            }).ToList();
 
 
             if (PrintView == "DesignMatching")
