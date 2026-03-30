@@ -1,5 +1,5 @@
-﻿@using Inventory.Domain.ViewModels
-@model ProgramVM
+﻿@using Inventory.Domain.Entities
+@model Design
 
 @{
 	Layout = "~/Views/Shared/_Layout_Print.cshtml";
@@ -8,13 +8,12 @@
 	ViewBag.PageOrientation = "landscape";
 	ViewBag.PageMargin = "8mm 10mm 8mm 10mm";
 	ViewBag.FontSize = "12pt";
-	ViewData["Title"] = "Program - " + Model.ProgramNo;
+	ViewData["Title"] = "Design - " + Model.DesignNo;
 
-	var vProgramMatching = ViewBag.MatchingList as List<ProgramMatchingVM> ?? new List<ProgramMatchingVM>();
+	var vPlateList = ViewBag.PlateList as List<DesignPlate> ?? new List<DesignPlate>();
+	var vMatchingList = ViewBag.MatchingList as List<DesignMatching> ?? new List<DesignMatching>();
 
-	var vMatchingNoList = vProgramMatching.GroupBy(x => new { x.DesignId, x.MatchingNo }).Select(x => x.First()).ToList();
-	var vDesignList = vProgramMatching.GroupBy(x => x.DesignId).Select(x => x.First()).ToList();
-	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
+	var vMatchingNoList = vMatchingList.GroupBy(x => x.MatchingNo).Select(x => x.First()).ToList();
 }
 
 @section styles {
@@ -42,95 +41,90 @@
 </div>
 
 <div id="printContainer" class="row">
-	@foreach (var vDesign in vDesignList)
-	{
-		<div class="col-12">
-			<table class="table table-borderless align-middle text-center" style="width: 100%;">
-				<tr>
+	<div class="col-12">
+		<table class="table table-borderless align-middle text-center" style="width: 100%;">
+			<tr>
 
-					<!-- Left -->
-					<td class="text-start text-theme" width="25%">
-						<small class="d-block">॥ શ્રી હિંગલાજ માતાજી ॥</small>
+				<!-- Left -->
+				<td class="text-start text-theme" width="25%">
+					<small class="d-block">॥ શ્રી હિંગલાજ માતાજી ॥</small>
+					<div class="fw-semibold">
+						Maulikbhai <br>
+						Mo. 94095 30045
+					</div>
+				</td>
+
+				<!-- Center -->
+				<td class="text-theme" width="50%">
+					<small class="d-block">॥ શ્રી ગણેશાય નમઃ ॥</small>
+
+					<!-- Logo -->
+					<img src="~/assets/Images/logo.png" alt="Logo" class="img-fluid" style="max-height:70px;">
+					</td>
+
+					<!-- Right -->
+					<td class="text-end text-theme" width="25%">
+						<small class="d-block">॥ શ્રી સ્વામિનારાયણ ॥</small>
 						<div class="fw-semibold">
-							Maulikbhai <br>
-							Mo. 94095 30045
+							Jasminbhai <br>
+							Mo. 73830 86867
 						</div>
 					</td>
 
-					<!-- Center -->
-					<td class="text-theme" width="50%">
-						<small class="d-block">॥ શ્રી ગણેશાય નમઃ ॥</small>
-
-						<!-- Logo -->
-						<img src="~/assets/Images/logo.png" alt="Logo" class="img-fluid" style="max-height:70px;">
-						</td>
-
-						<!-- Right -->
-						<td class="text-end text-theme" width="25%">
-							<small class="d-block">॥ શ્રી સ્વામિનારાયણ ॥</small>
-							<div class="fw-semibold">
-								Jasminbhai <br>
-								Mo. 73830 86867
-							</div>
-						</td>
-
-					</tr>
-				</table>
-			</div>
-			<div class="col-12">
-				<table style="width:100%; border-collapse:collapse;">
-					<tr>
-						<td class="text-theme" style="width:25%; padding:6px 0;">
-							<strong>ક્વોલિટી</strong> : @Model.Quality
-						</td>
-						<td class="text-theme" style="width:25%; padding:6px 0;">
-							<strong>ડિ. નં.</strong> : @vDesign.DesignNo
-						</td>
-						<td class="text-theme" style="width:30%; padding:6px 0;">
+				</tr>
+			</table>
+		</div>
+		<div class="col-12">
+			<table style="width:100%; border-collapse:collapse;">
+				<tr>
+					<td class="text-theme" style="width:50%; padding:6px 0;">
+						<strong>ડિ. નં.</strong> : @Model.DesignNo
+					</td>
+					@* <td class="text-theme" style="width:30%; padding:6px 0;">
 							<strong>પાર્ટી</strong> : @Model.PartyName
-						</td>
-						<td class="text-theme" style="width:20%; padding:6px 0; text-align:right;">
-							<strong>તારીખ</strong> : @Model.Date.ToString("dd MMM yyyy")
-						</td>
-					</tr>
-				</table>
-			</div>
-			<hr style="border:none; border-top:1px solid #000;" />
+						</td> *@
+					<td class="text-theme" style="width:50%; padding:6px 0; text-align:right;">
+						<strong>તારીખ</strong> : @Model.Date.ToString("dd MMM yyyy")
+					</td>
+				</tr>
+			</table>
+		</div>
+		<hr style="border:none; border-top:1px solid #000;" />
 
-			<div class="col-12">
-				<table class="table table-bordered text-theme">
-					<thead>
-						<tr class="">
-							<th class="text-theme">Plate Name</th>
-							<th class="text-theme text-center"></th>
-							@foreach (var vMatchingNo in vMatchingNoList.Where(x => x.DesignId == vDesign.DesignId))
+		<div class="col-12">
+			<table class="table table-bordered text-theme">
+				<thead>
+					<tr class="">
+						<th class="text-theme">Plate Name</th>
+						<th class="text-theme text-center"></th>
+						@foreach (var vMatchingNo in vMatchingNoList)
+						{
+							<th class="text-theme">M-@vMatchingNo.MatchingNo</th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@{
+						int i = 0;
+					}
+					@foreach (var item in vPlateList)
+					{
+						i++;
+						<tr>
+							<td class="text-theme">@item.PlateName</td>
+							<td class="text-theme text-center">@i</td>
+							@foreach (var vMatchingNo in vMatchingNoList)
 							{
-								<th class="text-theme">M-@vMatchingNo.MatchingNo</th>
+								<td class="text-theme">@vMatchingList.Where(x=>x.MatchingNo == vMatchingNo.MatchingNo && x.DesignPlateId == item.DesignPlateId).FirstOrDefault()?.Colour</td>
 							}
 						</tr>
-					</thead>
-					<tbody>
-						@{
-							int i = 0;
-						}
-						@foreach (var item in vPlateList.Where(x => x.DesignId == vDesign.DesignId))
-						{
-							i++;
-							<tr>
-								<td class="text-theme">@item.PlateName</td>
-								<td class="text-theme text-center">@i</td>
-								@foreach (var vMatchingNo in vMatchingNoList.Where(x => x.DesignId == vDesign.DesignId))
-								{
-									<td class="text-theme">@vProgramMatching.Where(x => x.PlateId == item.PlateId && x.MatchingNo == vMatchingNo.MatchingNo).FirstOrDefault()?.Colour</td>
-								}
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
+					}
+				</tbody>
+			</table>
+		</div>
 		
-			<div style="page-break-after: always !important;"></div>
-		}
+		<div style="page-break-after: always !important;"></div>
+		
 	</div>
 
 	@section scripts {
@@ -141,7 +135,7 @@
 			var btn = document.getElementById('btnPrint');
 			var downloadBtn = document.getElementById('btnDownload');
 			var element = document.getElementById('printContainer');
-			var filename = '@($"DesignMatching-{Model.ProgramNo}.pdf")';
+			var filename = '@($"DesignMatching-{Model.DesignNo}.pdf")';
 			var pageMargin = '@ViewBag.PageMargin';
 			var pageSize = '@ViewBag.PageSize';
 			var pageOrientation = '@ViewBag.PageOrientation';

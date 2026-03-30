@@ -247,42 +247,17 @@ namespace Inventory.Web.Controllers
         #endregion
 
 
-        //#region Print
-        //public async Task<IActionResult> Print(int DesignId)
-        //{
-        //    var vDesign = await _db.Designs
-        //        .Include(x => x.DesignPlates)
-        //            .ThenInclude(x => x.DesignMatchings)
-        //        .FirstOrDefaultAsync(x => x.DesignId == DesignId);
+        #region Print
+        public async Task<IActionResult> Print(int DesignId)
+        {
+            var vModel = await _db.Designs
+                .Where(x => x.DesignId == DesignId).FirstOrDefaultAsync();
 
-        //    var vModel = new MatchingVM
-        //    {
-        //        DesignId = vDesign.DesignId,
-        //        DesignNo = vDesign.DesignNo,
-        //        Date = vDesign.Date,
-        //        PartyId = vDesign.PartyId,
-        //        Plates = vDesign.DesignPlates.Count(),
-        //        Matching = vDesign.DesignPlates.FirstOrDefault()?.DesignMatchings.Count() ?? 0,
+            ViewBag.PlateList = await _db.DesignPlates.Where(x => x.DesignId == DesignId).ToListAsync();
+            ViewBag.MatchingList = await _db.DesignMatchings.Where(m => m.DesignPlate.DesignId == DesignId).ToListAsync();
 
-        //        Rows = vDesign.DesignPlates
-        //            .Select(p => new PlateRow
-        //            {
-        //                DesignPlateId = p.DesignPlateId,
-        //                PlateName = p.PlateName,
-        //                PlateNo = p.PlateNo,
-        //                Matchings = p.DesignMatchings
-        //                    .OrderBy(m => m.MatchingNo)
-        //                    .Select(m => new MatchingCell
-        //                    {
-        //                        DesignMatchingId = m.DesignMatchingId,
-        //                        MatchingNo = m.MatchingNo,
-        //                        Colour = m.Colour,
-        //                    }).ToList()
-        //            }).ToList()
-        //    };
-
-        //    return View("Print_Matching", vModel);
-        //}
-        //#endregion
+            return View("Print_Matching",vModel);
+        }
+        #endregion
     }
 }

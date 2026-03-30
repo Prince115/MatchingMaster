@@ -68,6 +68,14 @@
 								<td>@item.Date.ToString("dd-MM-yyyy")</td>
 
 								<td class="text-center">
+									<span data-bs-toggle="tooltip" data-bs-placement="top" title="Print Matching">
+										<a asp-action="Print"
+											   asp-route-DesignId="@item.DesignId"
+											   target="_blank"
+											   class="btn btn-sm btn-secondary">
+											<i class="bi bi-printer"></i>
+										</a>
+									</span>
 
 									<a asp-controller="Design"
 										   asp-action="AddEdit"

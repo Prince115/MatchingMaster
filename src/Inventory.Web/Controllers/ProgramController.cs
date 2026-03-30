@@ -67,9 +67,7 @@ namespace Inventory.Web.Controllers
                 .Where(pm => programIds.Contains(pm.ProgramId))
                 .ToListAsync();
 
-            var totalMatchingsMap = programMatchings
-                .GroupBy(pm => pm.ProgramId)
-                .ToDictionary(g => g.Key, g => g.Select(pm => pm.MatchingNo).Distinct().Count());
+            var totalMatchingsMap = programMatchings.GroupBy(x => new { x.MatchingNo, x.DesignId }).Select(x => x.First());
 
             var designIdsPerProgram = programMatchings
                 .GroupBy(pm => pm.ProgramId)
@@ -91,7 +89,7 @@ namespace Inventory.Web.Controllers
                 PartyId = p.PartyId,
                 PartyName = parties.TryGetValue(p.PartyId, out var pn) ? pn : string.Empty,
                 DesignNoCSV = designIdsPerProgram.TryGetValue(p.ProgramId, out var dids) ? string.Join(", ", dids.Select(id => designs.TryGetValue(id, out var dn) ? dn.ToString() : id.ToString())) : string.Empty,
-                TotalMatchings = totalMatchingsMap.TryGetValue(p.ProgramId, out var tm) ? tm : 0,
+                TotalMatchings = totalMatchingsMap.Where(x=>x.ProgramId == p.ProgramId).Count(),
                 Quality = p.Quality,
                 Date = p.Date,
                 MainCut = p.MainCut,
