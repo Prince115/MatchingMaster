@@ -21,7 +21,7 @@ namespace Inventory.Web.Controllers
 
 
         #region Index
-        public async Task<IActionResult> Index(int? designNo,int page = 1, int pageSize = 20)
+        public async Task<IActionResult> Index(int? designNo, int page = 1, int pageSize = 20)
         {
             var query = _db.Designs.Select(x => new MatchingVM
             {
@@ -35,7 +35,7 @@ namespace Inventory.Web.Controllers
                         .SelectMany(x => x.DesignMatchings).GroupBy(x => x.MatchingNo).Count(),
             });
 
-            if(designNo != null)
+            if (designNo != null)
             {
                 query = query.Where(x => x.DesignNo == designNo);
             }
@@ -245,5 +245,44 @@ namespace Inventory.Web.Controllers
             return RedirectToAction("Index");
         }
         #endregion
+
+
+        //#region Print
+        //public async Task<IActionResult> Print(int DesignId)
+        //{
+        //    var vDesign = await _db.Designs
+        //        .Include(x => x.DesignPlates)
+        //            .ThenInclude(x => x.DesignMatchings)
+        //        .FirstOrDefaultAsync(x => x.DesignId == DesignId);
+
+        //    var vModel = new MatchingVM
+        //    {
+        //        DesignId = vDesign.DesignId,
+        //        DesignNo = vDesign.DesignNo,
+        //        Date = vDesign.Date,
+        //        PartyId = vDesign.PartyId,
+        //        Plates = vDesign.DesignPlates.Count(),
+        //        Matching = vDesign.DesignPlates.FirstOrDefault()?.DesignMatchings.Count() ?? 0,
+
+        //        Rows = vDesign.DesignPlates
+        //            .Select(p => new PlateRow
+        //            {
+        //                DesignPlateId = p.DesignPlateId,
+        //                PlateName = p.PlateName,
+        //                PlateNo = p.PlateNo,
+        //                Matchings = p.DesignMatchings
+        //                    .OrderBy(m => m.MatchingNo)
+        //                    .Select(m => new MatchingCell
+        //                    {
+        //                        DesignMatchingId = m.DesignMatchingId,
+        //                        MatchingNo = m.MatchingNo,
+        //                        Colour = m.Colour,
+        //                    }).ToList()
+        //            }).ToList()
+        //    };
+
+        //    return View("Print_Matching", vModel);
+        //}
+        //#endregion
     }
 }

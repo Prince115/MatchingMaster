@@ -14,7 +14,7 @@
 
 	var vMatchingNoList = vProgramMatching.GroupBy(x => new { x.DesignId, x.MatchingNo }).Select(x => x.First()).ToList();
 	var vDesignList = vProgramMatching.GroupBy(x => x.DesignId).Select(x => x.First()).ToList();
-	var vPlateList = vProgramMatching.GroupBy(x => new { x.PlateId, x.DesignId }).Select(x => x.First()).ToList();
+	var vPlateList = vProgramMatching.GroupBy(x => x.PlateId).Select(x => x.First()).ToList();
 }
 
 @section styles {
